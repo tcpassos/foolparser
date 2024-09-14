@@ -1,20 +1,12 @@
-// Declaração de uma classe com atributos e métodos
-class MinhaClasse {
-    // Atributos
-    int numero;
-    bool ativo;
+{ class SampleClass
+    int num;
+    bool flag;
 
-    // Método sem argumentos
-    void iniciar() {
-        if (ativo) {
-            numero = 10;
-        } else {
-            numero = 0;
-        }
+    void test() {
+        if (flag) num = 10; else num = 0;
     }
 
-    // Método com argumentos
-    int somar(int a, int b) {
+    int sum(int a, int b) {
         return a + b;
     }
 }

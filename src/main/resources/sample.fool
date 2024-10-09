@@ -1,9 +1,16 @@
 { class SampleClass
     int num;
+    int num2;
     bool flag;
 
     void test() {
         if (flag) num = 10; else num = 0;
+    }
+
+    int test2() {
+        num = 1;
+        num2 = 2;
+        return sum(1, 2);
     }
 
     int sum(int a, int b) {

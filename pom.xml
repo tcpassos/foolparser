@@ -13,12 +13,64 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-lexer</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>jflex.Main</mainClass>
+                            <arguments>
+                                <argument>-d</argument>
+                                <argument>src/main/java/fool</argument>
+                                <argument>src/main/flex/lexer.flex</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <!-- Execução para o CUP -->
+                    <execution>
+                        <id>generate-parser</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>java_cup.Main</mainClass>
+                            <arguments>
+                                <argument>-parser</argument>
+                                <argument>Parser</argument>
+                                <argument>-symbols</argument>
+                                <argument>sym</argument>
+                                <argument>-destdir</argument>
+                                <argument>src/main/java/fool</argument>
+                                <argument>src/main/cup/parser.cup</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>de.jflex</groupId>
             <artifactId>jflex</artifactId>
             <version>1.9.1</version>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>com.github.vbmacher</groupId>
+            <artifactId>java-cup</artifactId>
+            <version>11b</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -5,7 +5,7 @@ import java_cup.runtime.*;
 parser code {:
     public void report_error(String message, Object info) {
         Symbol symbol = (Symbol) info;
-        String error = "Erro de sintaxe no token '" + symbol.value + "'";
+        String error = "Token '" + symbol.value + "' encontrado não esperado.";
         System.err.println(error);
         super.report_error(message, info);
     }
@@ -16,19 +16,17 @@ parser code {:
     }
 :}
 
-// Declaração de tokens (terminais)
 terminal CLASS, VOID, INT, BOOL, IF, ELSE, RETURN, TRUE, FALSE, EQ, LT, GT, PLUS, TIMES, ASSIGN, NOT, AND, OR, LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON, COMMA;
 terminal String IDENTIFIER;
 terminal Integer INT_CONST;
 
-// Declaração de não-terminais
 non terminal program;
 non terminal class_decl;
 non terminal decl_list;
 non terminal declaration;
 non terminal var_decl;
 non terminal method_decl;
-non terminal type;
+non terminal var_type;
 non terminal stmt;
 non terminal stmt_list;
 non terminal expr;
@@ -37,7 +35,6 @@ non terminal arg_list_non_empty;
 non terminal expr_list;
 non terminal expr_list_non_empty;
 
-// Precedências
 precedence left ELSE;
 precedence nonassoc IF;
 precedence left OR;
@@ -50,44 +47,32 @@ precedence right NOT;
 
 start with program;
 
-/// Regras de produção
+program ::= class_decl;
 
-program ::= class_decl
-          ;
-
-class_decl ::= LBRACE CLASS IDENTIFIER decl_list RBRACE
-             ;
+class_decl ::= LBRACE CLASS IDENTIFIER decl_list RBRACE;
 
 decl_list ::= /* vazio */
-            | decl_list declaration
-            ;
+            | decl_list declaration;
 
 declaration ::= var_decl
-              | method_decl
-              ;
+              | method_decl;
 
-var_decl ::= type IDENTIFIER SEMICOLON
-           ;
+var_decl ::= var_type IDENTIFIER SEMICOLON;
 
-method_decl ::= type IDENTIFIER LPAREN arg_list RPAREN LBRACE stmt_list RBRACE
-              ;
+method_decl ::= var_type IDENTIFIER LPAREN arg_list RPAREN LBRACE stmt_list RBRACE
+              | VOID IDENTIFIER LPAREN arg_list RPAREN LBRACE stmt_list RBRACE;
 
 arg_list ::= /* vazio */
-           | arg_list_non_empty
-           ;
+           | arg_list_non_empty;
 
-arg_list_non_empty ::= type IDENTIFIER
-                     | arg_list_non_empty COMMA type IDENTIFIER
-                     ;
+arg_list_non_empty ::= var_type IDENTIFIER
+                     | arg_list_non_empty COMMA var_type IDENTIFIER;
 
-type ::= INT
-       | BOOL
-       | VOID
-       ;
+var_type ::= INT
+           | BOOL;
 
 stmt_list ::= /* vazio */
-            | stmt_list stmt
-            ;
+            | stmt_list stmt;
 
 stmt ::= IDENTIFIER ASSIGN expr SEMICOLON
        | IF LPAREN expr RPAREN stmt
@@ -107,13 +92,10 @@ expr ::= expr PLUS expr
        | INT_CONST
        | IDENTIFIER
        | IDENTIFIER LPAREN expr_list RPAREN
-       | LPAREN expr RPAREN
-       ;
+       | LPAREN expr RPAREN;
 
 expr_list ::= /* vazio */
-            | expr_list_non_empty
-            ;
+            | expr_list_non_empty;
 
 expr_list_non_empty ::= expr
-                      | expr_list_non_empty COMMA expr
-                      ;
+                      | expr_list_non_empty COMMA expr;

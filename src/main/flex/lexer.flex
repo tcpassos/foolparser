@@ -8,10 +8,6 @@ import java_cup.runtime.Symbol;
 %public
 %class Lexer
 
-%{
-    // Aqui você pode adicionar variáveis globais e imports, se necessário
-%}
-
 %%
 
 // Palavras reservadas
@@ -49,7 +45,7 @@ import java_cup.runtime.Symbol;
 [0-9]+              { return new Symbol(sym.INT_CONST, Integer.parseInt(yytext())); }
 
 // Espaços em branco
-[ \t\n\r]+          { /* Ignorar espaços em branco */ }
+[ \t\n\r]+          { /* Ignora espaços em branco */ }
 
 // Símbolos inesperados
 .                   { System.err.println("Token inesperado: " + yytext()); }

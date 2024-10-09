@@ -319,9 +319,6 @@ public class Lexer implements java_cup.runtime.Scanner {
   /** Whether the user-EOF-code has already been executed. */
   private boolean zzEOFDone;
 
-  /* user code: */
-    // Aqui você pode adicionar variáveis globais e imports, se necessário
-
 
   /**
    * Creates a new scanner
@@ -695,7 +692,7 @@ public class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 29: break;
           case 2:
-            { /* Ignorar espaços em branco */
+            { /* Ignora espaços em branco */
             }
           // fall through
           case 30: break;

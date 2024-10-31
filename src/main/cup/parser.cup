@@ -29,7 +29,7 @@ parser code {:
     }
 :}
 
-terminal CLASS, VOID, INT, BOOL, IF, ELSE, RETURN, EQ, LT, GT, PLUS, TIMES, ASSIGN, NOT, AND, OR, LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON, COMMA;
+terminal CLASS, VOID, INT, BOOL, IF, ELSE, RETURN, EQ, LT, GT, PLUS, TIMES, ASSIGN, NOT, AND, OR, LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON, COMMA, WHILE;
 terminal String IDENTIFIER;
 terminal Integer INT_CONST;
 terminal Boolean TRUE, FALSE;
@@ -94,7 +94,8 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
             :}
        | IF LPAREN expr RPAREN stmt
        | IF LPAREN expr RPAREN stmt ELSE stmt
-       | RETURN expr SEMICOLON;
+       | RETURN expr SEMICOLON
+       | WHILE LPAREN expr RPAREN stmt;
 
 expr ::= expr:e1 PLUS expr:e2
           {:

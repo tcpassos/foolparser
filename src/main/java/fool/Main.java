@@ -10,6 +10,7 @@ public class Main {
         try {
             String resource = Lexer.class.getClassLoader().getResource("sample.fool").getFile();
             Lexer lexer = new Lexer(new FileReader(resource));
+            @SuppressWarnings("deprecation")
             SymbolFactory symbolFactory = new DefaultSymbolFactory();
             Parser parser = new Parser(lexer, symbolFactory);
 

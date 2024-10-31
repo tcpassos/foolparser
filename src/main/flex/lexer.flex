@@ -20,6 +20,7 @@ import java_cup.runtime.Symbol;
 "return"            { return new Symbol(sym.RETURN, yytext()); }
 "True"              { return new Symbol(sym.TRUE, Boolean.parseBoolean(yytext())); }
 "False"             { return new Symbol(sym.FALSE, Boolean.parseBoolean(yytext())); }
+"while"             { return new Symbol(sym.WHILE, yytext()); }
 
 // Operadores e símbolos
 "=="                { return new Symbol(sym.EQ, yytext()); }

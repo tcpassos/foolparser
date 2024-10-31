@@ -6,6 +6,7 @@
     void test() {
         flag = not false;
         if (flag) num = 10; else num = 0;
+        while (num < 20) num = num + 1;
     }
 
     int test2() {

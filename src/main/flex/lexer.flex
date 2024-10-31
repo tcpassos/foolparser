@@ -18,8 +18,8 @@ import java_cup.runtime.Symbol;
 "if"                { return new Symbol(sym.IF, yytext()); }
 "else"              { return new Symbol(sym.ELSE, yytext()); }
 "return"            { return new Symbol(sym.RETURN, yytext()); }
-"True"              { return new Symbol(sym.TRUE, yytext()); }
-"False"             { return new Symbol(sym.FALSE, yytext()); }
+"True"              { return new Symbol(sym.TRUE, Boolean.parseBoolean(yytext())); }
+"False"             { return new Symbol(sym.FALSE, Boolean.parseBoolean(yytext())); }
 
 // Operadores e símbolos
 "=="                { return new Symbol(sym.EQ, yytext()); }

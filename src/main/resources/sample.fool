@@ -4,6 +4,7 @@
     bool flag;
 
     void test() {
+        flag = not false;
         if (flag) num = 10; else num = 0;
     }
 

@@ -1,8 +1,21 @@
 package fool;
 
 import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.List;
 
 parser code {:
+    private List<TACInstruction> tacInstructions = new ArrayList<>();
+    private int tempCount = 0;
+
+    private String newTemp() {
+        return "t" + tempCount++;
+    }
+
+    public List<TACInstruction> getTacInstructions() {
+        return tacInstructions;
+    }
+
     public void report_error(String message, Object info) {
         Symbol symbol = (Symbol) info;
         String error = "Token '" + symbol.value + "' encontrado não esperado.";
@@ -16,9 +29,10 @@ parser code {:
     }
 :}
 
-terminal CLASS, VOID, INT, BOOL, IF, ELSE, RETURN, TRUE, FALSE, EQ, LT, GT, PLUS, TIMES, ASSIGN, NOT, AND, OR, LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON, COMMA;
+terminal CLASS, VOID, INT, BOOL, IF, ELSE, RETURN, EQ, LT, GT, PLUS, TIMES, ASSIGN, NOT, AND, OR, LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON, COMMA;
 terminal String IDENTIFIER;
 terminal Integer INT_CONST;
+terminal Boolean TRUE, FALSE;
 
 non terminal program;
 non terminal class_decl;
@@ -27,12 +41,12 @@ non terminal declaration;
 non terminal var_decl;
 non terminal method_decl;
 non terminal var_type;
-non terminal stmt;
+non terminal String stmt;
 non terminal stmt_list;
-non terminal expr;
+non terminal String expr;
 non terminal arg_list;
 non terminal arg_list_non_empty;
-non terminal expr_list;
+non terminal List<String> expr_list;
 non terminal expr_list_non_empty;
 
 precedence left ELSE;
@@ -74,25 +88,86 @@ var_type ::= INT
 stmt_list ::= /* vazio */
             | stmt_list stmt;
 
-stmt ::= IDENTIFIER ASSIGN expr SEMICOLON
+stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
+            {:
+                tacInstructions.add(new TACInstruction("=", e, id));
+            :}
        | IF LPAREN expr RPAREN stmt
        | IF LPAREN expr RPAREN stmt ELSE stmt
        | RETURN expr SEMICOLON;
 
-expr ::= expr PLUS expr
-       | expr TIMES expr
-       | expr EQ expr
-       | expr LT expr
-       | expr GT expr
-       | expr AND expr
-       | expr OR expr
-       | NOT expr
+expr ::= expr:e1 PLUS expr:e2
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction("+", e1, e2, temp));
+              RESULT = temp;
+          :}
+       | expr:e1 TIMES expr:e2
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction("*", e1, e2, temp));
+              RESULT = temp;
+          :}
+       | expr:e1 EQ expr:e2
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction("==", e1, e2, temp));
+              RESULT = temp;
+          :}
+       | expr:e1 LT expr:e2
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction("<", e1, e2, temp));
+              RESULT = temp;
+          :}
+       | expr:e1 GT expr:e2
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction(">", e1, e2, temp));
+              RESULT = temp;
+          :}
+       | expr:e1 AND expr:e2
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction("and", e1, e2, temp));
+              RESULT = temp;
+          :}
+       | expr:e1 OR expr:e2
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction("or", e1, e2, temp));
+              RESULT = temp;
+          :}
+       | NOT expr:e
+          {:
+              String temp = newTemp();
+              tacInstructions.add(new TACInstruction("not", e, temp));
+              RESULT = temp;
+          :}
        | TRUE
+          {:
+              RESULT = "true";
+          :}
        | FALSE
-       | INT_CONST
-       | IDENTIFIER
-       | IDENTIFIER LPAREN expr_list RPAREN
-       | LPAREN expr RPAREN;
+          {:
+              RESULT = "false";
+          :}
+       | INT_CONST:ic
+          {:
+              RESULT = ic.toString();
+          :}
+       | IDENTIFIER:id
+          {:
+              RESULT = id;
+          :}
+       | IDENTIFIER:id LPAREN expr_list:args RPAREN
+          {:
+              // Implementação para chamadas de função
+          :}
+       | LPAREN expr:e RPAREN
+          {:
+              RESULT = e;
+          :};
 
 expr_list ::= /* vazio */
             | expr_list_non_empty;

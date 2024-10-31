@@ -15,6 +15,7 @@ public class Main {
 
             parser.parse();
             System.out.println("Parsing concluído com sucesso!");
+            parser.getTacInstructions().forEach(System.out::println);
         } catch (Exception e) {
             e.printStackTrace();
         }

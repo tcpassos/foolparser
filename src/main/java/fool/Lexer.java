@@ -792,7 +792,7 @@ public class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 49: break;
           case 22:
-            { return new Symbol(sym.TRUE, yytext());
+            { return new Symbol(sym.TRUE, Boolean.parseBoolean(yytext()));
             }
           // fall through
           case 50: break;
@@ -812,7 +812,7 @@ public class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 53: break;
           case 26:
-            { return new Symbol(sym.FALSE, yytext());
+            { return new Symbol(sym.FALSE, Boolean.parseBoolean(yytext()));
             }
           // fall through
           case 54: break;

@@ -224,14 +224,14 @@ public class Parser extends java_cup.runtime.lr_parser {
 
 
 
-    private List<TACInstruction> tacInstructions = new ArrayList<>();
+    private List<Node> tacInstructions = new ArrayList<>();
     private int tempCount = 0;
 
     private String newTemp() {
         return "t" + tempCount++;
     }
 
-    public List<TACInstruction> getTacInstructions() {
+    public List<Node> getTacInstructions() {
         return tacInstructions;
     }
 
@@ -450,7 +450,7 @@ class CUP$Parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).right;
 		String e = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		
-                tacInstructions.add(new TACInstruction("=", e, id));
+                tacInstructions.add(new AssignmentStatement(id, e));
             
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("stmt",7, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -504,7 +504,7 @@ class CUP$Parser$actions {
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("+", e1, e2, temp));
+              tacInstructions.add(new Expression("+", e1, e2, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -523,7 +523,7 @@ class CUP$Parser$actions {
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("*", e1, e2, temp));
+              tacInstructions.add(new Expression("*", e1, e2, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -542,7 +542,7 @@ class CUP$Parser$actions {
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("==", e1, e2, temp));
+              tacInstructions.add(new Expression("==", e1, e2, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -561,7 +561,7 @@ class CUP$Parser$actions {
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("<", e1, e2, temp));
+              tacInstructions.add(new Expression("<", e1, e2, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -580,7 +580,7 @@ class CUP$Parser$actions {
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction(">", e1, e2, temp));
+              tacInstructions.add(new Expression(">", e1, e2, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -599,7 +599,7 @@ class CUP$Parser$actions {
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("and", e1, e2, temp));
+              tacInstructions.add(new Expression("and", e1, e2, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -618,7 +618,7 @@ class CUP$Parser$actions {
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("or", e1, e2, temp));
+              tacInstructions.add(new Expression("or", e1, e2, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -634,7 +634,7 @@ class CUP$Parser$actions {
 		String e = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("not", e, temp));
+              tacInstructions.add(new Expression("not", e, temp));
               RESULT = temp;
           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);

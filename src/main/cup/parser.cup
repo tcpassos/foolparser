@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 parser code {:
-    private List<TACInstruction> tacInstructions = new ArrayList<>();
+    private List<Node> tacInstructions = new ArrayList<>();
     private int tempCount = 0;
 
     private String newTemp() {
         return "t" + tempCount++;
     }
 
-    public List<TACInstruction> getTacInstructions() {
+    public List<Node> getTacInstructions() {
         return tacInstructions;
     }
 
@@ -90,7 +90,7 @@ stmt_list ::= /* vazio */
 
 stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
             {:
-                tacInstructions.add(new TACInstruction("=", e, id));
+                tacInstructions.add(new AssignmentStatement(id, e));
             :}
        | IF LPAREN expr RPAREN stmt
        | IF LPAREN expr RPAREN stmt ELSE stmt
@@ -100,49 +100,49 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
 expr ::= expr:e1 PLUS expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("+", e1, e2, temp));
+              tacInstructions.add(new Expression("+", e1, e2, temp));
               RESULT = temp;
           :}
        | expr:e1 TIMES expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("*", e1, e2, temp));
+              tacInstructions.add(new Expression("*", e1, e2, temp));
               RESULT = temp;
           :}
        | expr:e1 EQ expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("==", e1, e2, temp));
+              tacInstructions.add(new Expression("==", e1, e2, temp));
               RESULT = temp;
           :}
        | expr:e1 LT expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("<", e1, e2, temp));
+              tacInstructions.add(new Expression("<", e1, e2, temp));
               RESULT = temp;
           :}
        | expr:e1 GT expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction(">", e1, e2, temp));
+              tacInstructions.add(new Expression(">", e1, e2, temp));
               RESULT = temp;
           :}
        | expr:e1 AND expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("and", e1, e2, temp));
+              tacInstructions.add(new Expression("and", e1, e2, temp));
               RESULT = temp;
           :}
        | expr:e1 OR expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("or", e1, e2, temp));
+              tacInstructions.add(new Expression("or", e1, e2, temp));
               RESULT = temp;
           :}
        | NOT expr:e
           {:
               String temp = newTemp();
-              tacInstructions.add(new TACInstruction("not", e, temp));
+              tacInstructions.add(new Expression("not", e, temp));
               RESULT = temp;
           :}
        | TRUE

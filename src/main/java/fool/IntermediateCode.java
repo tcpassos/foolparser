@@ -8,7 +8,7 @@ import java.util.Map;
 public class IntermediateCode implements CodeFragment {
 
     private List<CodeFragment> mainCode;
-    private Map<String, List<CodeFragment>> labels;
+    private Map<String, CodeFragment> labels;
 
     public IntermediateCode() {
         this.mainCode = new ArrayList<>();
@@ -21,9 +21,17 @@ public class IntermediateCode implements CodeFragment {
         mainCode.add(code);
     }
 
-    public void appendLabel(CodeFragment code) {
+    public String appendLabel(CodeFragment code) {
         String label = "L" + labelCount++;
-        labels.get(label).add(code);
+        appendLabel(label, code);
+        return label;
+    }
+
+    public void appendLabel(String label, CodeFragment code) {
+        if (labels.containsKey(label)) {
+            throw new IllegalArgumentException("Label already exists: " + label);
+        }
+        labels.put(label, code);
     }
 
     @Override
@@ -36,8 +44,8 @@ public class IntermediateCode implements CodeFragment {
                          .forEach(s -> sb.append(s).append("\n"));
 
         labels.forEach((label, code) -> {
-            sb.append(label).append(":\n");
-            code.forEach(c -> sb.append(c.generate()).append("\n"));
+            sb.append("\n").append(label).append(":\n");
+            sb.append(code.generate()).append("\n");
         });
 
         return sb.toString();

@@ -12,10 +12,11 @@ public class AssignmentStatement extends Statement {
     @Override
     public String generate() {
         StringBuilder sb = new StringBuilder();
-        sb.append(expression.generate())
-          .append(";")
-          .append(System.lineSeparator())
-          .append(String.format("%s = %s", identifier, expression.result));
+        String exp = expression.generate();
+        if (!exp.isEmpty()) {
+            sb.append(exp).append(System.lineSeparator());
+        }
+        sb.append(String.format("%s = %s", identifier, expression.result));
         return sb.toString();
     }
 }

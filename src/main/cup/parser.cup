@@ -41,14 +41,14 @@ non terminal declaration;
 non terminal var_decl;
 non terminal method_decl;
 non terminal method_call;
-non terminal var_type;
-non terminal String stmt;
-non terminal stmt_list;
+non terminal String var_type;
+non terminal Statement stmt;
+non terminal List<Statement> stmt_list;
 non terminal Expression expr;
 non terminal List<Expression> expr_list;
 non terminal List<Expression> expr_list_non_empty;
-non terminal arg_list;
-non terminal arg_list_non_empty;
+non terminal List<String> arg_list;
+non terminal List<String> arg_list_non_empty;
 
 precedence left ELSE;
 precedence nonassoc IF;
@@ -74,72 +74,103 @@ declaration ::= var_decl
 
 var_decl ::= var_type IDENTIFIER SEMICOLON;
 
-method_decl ::= var_type IDENTIFIER LPAREN arg_list RPAREN LBRACE stmt_list RBRACE
-              | VOID IDENTIFIER LPAREN arg_list RPAREN LBRACE stmt_list RBRACE;
+method_decl ::= var_type IDENTIFIER LPAREN arg_list RPAREN LBRACE stmt_list:sl RBRACE
+                {:
+                    sl.forEach(code::append);
+                :}
+              | VOID IDENTIFIER LPAREN arg_list RPAREN LBRACE stmt_list:sl RBRACE
+                {:
+                    sl.forEach(code::append);
+                :};
 
 arg_list ::= /* vazio */
            | arg_list_non_empty;
 
-arg_list_non_empty ::= var_type IDENTIFIER
-                     | arg_list_non_empty COMMA var_type IDENTIFIER;
+arg_list_non_empty ::= var_type:t IDENTIFIER:id
+                        {:
+                            RESULT = new ArrayList<>();
+                            RESULT.add(t + " " + id);
+                        :}
+                     | arg_list_non_empty:l COMMA var_type:t IDENTIFIER:id
+                        {:
+                            l.add(t + " " + id);
+                            RESULT = l;
+                        :};
 
-var_type ::= INT
-           | BOOL;
+var_type ::= INT   {: RESULT = "int"; :}
+           | BOOL  {: RESULT = "bool"; :};
 
 method_call ::= IDENTIFIER LPAREN expr_list RPAREN;
 
 stmt_list ::= /* vazio */
-            | stmt_list stmt;
+                {:
+                    RESULT = new ArrayList<>();
+                :}
+            | stmt_list:l stmt:s
+                {:
+                    l.add(s);
+                    RESULT = l;
+                :};
 
 stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
             {:
-                RESULT = new AssignmentStatement(id, e).generate();
+                RESULT = new AssignmentStatement(id, e);
             :}
-       | IF LPAREN expr RPAREN stmt
-       | IF LPAREN expr RPAREN stmt ELSE stmt
+       | IF LPAREN expr:condition RPAREN stmt:then
+            {:
+                String thenLabel = code.appendLabel(then);
+                RESULT = new IfStatement(condition, thenLabel);
+            :}
+       | IF LPAREN expr:condition RPAREN stmt:thenStmt ELSE stmt:elseStmt
+            {:
+                String thenLabel = code.appendLabel(thenStmt);
+                String elseLabel = code.appendLabel(elseStmt);
+                RESULT = new IfElseStatement(condition, thenLabel, elseLabel);
+            :}
        | RETURN expr SEMICOLON
+            {:
+                RESULT = new AssignmentStatement("foo", new Expression("bar"));
+            :}
        | WHILE LPAREN expr RPAREN stmt
-       | method_call SEMICOLON;
+            {:
+                RESULT = new AssignmentStatement("foo", new Expression("bar"));
+            :}
+       | method_call SEMICOLON
+            {:
+                RESULT = new AssignmentStatement("foo", new Expression("bar"));
+            :};
 
 expr ::= expr:e1 PLUS expr:e2
           {:
-              String temp = newTemp();
-              RESULT = new Expression("+", e1.result, e2.result, temp);
+              RESULT = new Expression("+", e1.result, e2.result, newTemp());
           :}
        | expr:e1 TIMES expr:e2
           {:
-              String temp = newTemp();
-              RESULT = new Expression("*", e1.result, e2.result, temp);
+              RESULT = new Expression("*", e1.result, e2.result, newTemp());
           :}
        | expr:e1 EQ expr:e2
           {:
-              String temp = newTemp();
-              RESULT = new Expression("==", e1.result, e2.result, temp);
+              RESULT = new Expression("==", e1.result, e2.result, newTemp());
           :}
        | expr:e1 LT expr:e2
           {:
-              String temp = newTemp();
-              RESULT = new Expression("<", e1.result, e2.result, temp);
+              RESULT = new Expression("<", e1.result, e2.result, newTemp());
           :}
        | expr:e1 GT expr:e2
           {:
-              String temp = newTemp();
-              RESULT = new Expression(">", e1.result, e2.result, temp);
+              RESULT = new Expression(">", e1.result, e2.result, newTemp());
           :}
        | expr:e1 AND expr:e2
           {:
-              String temp = newTemp();
-              RESULT = new Expression("and", e1.result, e2.result, temp);
+              RESULT = new Expression("and", e1.result, e2.result, newTemp());
           :}
        | expr:e1 OR expr:e2
           {:
-              String temp = newTemp();
-              RESULT = new Expression("or", e1.result, e2.result, temp);
+              RESULT = new Expression("or", e1.result, e2.result, newTemp());
           :}
        | NOT expr:e
           {:
-              String temp = newTemp();
-              RESULT = new Expression("not", e.result, temp);
+              RESULT = new Expression("not", e.result, newTemp());
           :}
        | TRUE
           {:

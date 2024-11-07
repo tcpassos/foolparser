@@ -2,15 +2,20 @@ package fool;
 
 public class AssignmentStatement extends Statement {
     private String identifier;
-    private String expression;
+    private Expression expression;
 
-    public AssignmentStatement(String identifier, String expression) {
+    public AssignmentStatement(String identifier, Expression expression) {
         this.identifier = identifier;
         this.expression = expression;
     }
 
     @Override
     public String generate() {
-        return String.format("%s = %s", identifier, expression);
+        StringBuilder sb = new StringBuilder();
+        sb.append(expression.generate())
+          .append(";")
+          .append(System.lineSeparator())
+          .append(String.format("%s = %s", identifier, expression.result));
+        return sb.toString();
     }
 }

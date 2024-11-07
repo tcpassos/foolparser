@@ -1,10 +1,14 @@
 package fool;
 
-public class Expression implements Node {
+public class Expression implements CodeFragment {
     public String op;
     public String arg1;
     public String arg2;
     public String result;
+
+    public Expression(String result) {
+        this(null, null, null, result);
+    }
 
     public Expression(String op, String arg1, String result) {
         this(op, arg1, null, result);
@@ -19,7 +23,9 @@ public class Expression implements Node {
 
     @Override
     public String generate() {
-        if (arg2 == null || arg2.isEmpty()) {
+        if (op == null || op.isEmpty()) {
+            return "";
+        } else if (arg2 == null || arg2.isEmpty()) {
             return String.format("%s = %s %s", result, op, arg1);
         } else {
             return String.format("%s = %s %s %s", result, arg1, op, arg2);

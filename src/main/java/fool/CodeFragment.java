@@ -1,6 +1,6 @@
 package fool;
 
-public interface Node {
+public interface CodeFragment {
 
     String generate();
 

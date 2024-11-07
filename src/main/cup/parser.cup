@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 parser code {:
-    private List<Node> tacInstructions = new ArrayList<>();
+    private IntermediateCode code = new IntermediateCode();
     private int tempCount = 0;
 
     private String newTemp() {
         return "t" + tempCount++;
     }
 
-    public List<Node> getTacInstructions() {
-        return tacInstructions;
+    public String getIntermediateCode() {
+        return code.generate();
     }
 
     public void report_error(String message, Object info) {
@@ -40,14 +40,15 @@ non terminal decl_list;
 non terminal declaration;
 non terminal var_decl;
 non terminal method_decl;
+non terminal method_call;
 non terminal var_type;
 non terminal String stmt;
 non terminal stmt_list;
-non terminal String expr;
+non terminal Expression expr;
+non terminal List<Expression> expr_list;
+non terminal List<Expression> expr_list_non_empty;
 non terminal arg_list;
 non terminal arg_list_non_empty;
-non terminal List<String> expr_list;
-non terminal expr_list_non_empty;
 
 precedence left ELSE;
 precedence nonassoc IF;
@@ -85,86 +86,78 @@ arg_list_non_empty ::= var_type IDENTIFIER
 var_type ::= INT
            | BOOL;
 
+method_call ::= IDENTIFIER LPAREN expr_list RPAREN;
+
 stmt_list ::= /* vazio */
             | stmt_list stmt;
 
 stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
             {:
-                tacInstructions.add(new AssignmentStatement(id, e));
+                RESULT = new AssignmentStatement(id, e).generate();
             :}
        | IF LPAREN expr RPAREN stmt
        | IF LPAREN expr RPAREN stmt ELSE stmt
        | RETURN expr SEMICOLON
-       | WHILE LPAREN expr RPAREN stmt;
+       | WHILE LPAREN expr RPAREN stmt
+       | method_call SEMICOLON;
 
 expr ::= expr:e1 PLUS expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression("+", e1, e2, temp));
-              RESULT = temp;
+              RESULT = new Expression("+", e1.result, e2.result, temp);
           :}
        | expr:e1 TIMES expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression("*", e1, e2, temp));
-              RESULT = temp;
+              RESULT = new Expression("*", e1.result, e2.result, temp);
           :}
        | expr:e1 EQ expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression("==", e1, e2, temp));
-              RESULT = temp;
+              RESULT = new Expression("==", e1.result, e2.result, temp);
           :}
        | expr:e1 LT expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression("<", e1, e2, temp));
-              RESULT = temp;
+              RESULT = new Expression("<", e1.result, e2.result, temp);
           :}
        | expr:e1 GT expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression(">", e1, e2, temp));
-              RESULT = temp;
+              RESULT = new Expression(">", e1.result, e2.result, temp);
           :}
        | expr:e1 AND expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression("and", e1, e2, temp));
-              RESULT = temp;
+              RESULT = new Expression("and", e1.result, e2.result, temp);
           :}
        | expr:e1 OR expr:e2
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression("or", e1, e2, temp));
-              RESULT = temp;
+              RESULT = new Expression("or", e1.result, e2.result, temp);
           :}
        | NOT expr:e
           {:
               String temp = newTemp();
-              tacInstructions.add(new Expression("not", e, temp));
-              RESULT = temp;
+              RESULT = new Expression("not", e.result, temp);
           :}
        | TRUE
           {:
-              RESULT = "true";
+              RESULT = new Expression("true");
           :}
        | FALSE
           {:
-              RESULT = "false";
+              RESULT = new Expression("false");
           :}
        | INT_CONST:ic
           {:
-              RESULT = ic.toString();
+              RESULT = new Expression(ic.toString());
           :}
        | IDENTIFIER:id
           {:
-              RESULT = id;
+              RESULT = new Expression(id);
           :}
-       | IDENTIFIER:id LPAREN expr_list:args RPAREN
-          {:
-              // Implementação para chamadas de função
-          :}
+       | method_call:m
        | LPAREN expr:e RPAREN
           {:
               RESULT = e;
@@ -173,5 +166,13 @@ expr ::= expr:e1 PLUS expr:e2
 expr_list ::= /* vazio */
             | expr_list_non_empty;
 
-expr_list_non_empty ::= expr
-                      | expr_list_non_empty COMMA expr;
+expr_list_non_empty ::= expr:e
+                          {:
+                            RESULT = new ArrayList<>();
+                            RESULT.add(e);
+                          :}
+                      | expr_list_non_empty:l COMMA expr:e
+                          {:
+                            l.add(e);
+                            RESULT = l;
+                          :};

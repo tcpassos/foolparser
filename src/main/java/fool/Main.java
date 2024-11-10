@@ -15,7 +15,6 @@ public class Main {
             Parser parser = new Parser(lexer, symbolFactory);
 
             parser.parse();
-            System.out.println("Parsing concluído com sucesso!");
             System.out.println(parser.getIntermediateCode());
         } catch (Exception e) {
             e.printStackTrace();

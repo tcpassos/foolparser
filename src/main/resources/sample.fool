@@ -3,16 +3,17 @@
     int num2;
     bool flag;
 
-    void test() {
+    void main() {
         flag = not false;
         if (flag) num = 10; else num = 0;
         while (num < 20) num = num + 1;
+        test();
     }
 
-    int test2() {
+    int test() {
         num = 1;
         num2 = 2;
-        return sum(1, 2);
+        return sum(num, num2);
     }
 
     int sum(int a, int b) {

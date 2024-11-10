@@ -4,4 +4,6 @@ public interface CodeFragment {
 
     String generate();
 
+    String getResult();
+
 }

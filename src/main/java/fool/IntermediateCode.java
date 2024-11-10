@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class IntermediateCode implements CodeFragment {
+public class IntermediateCode {
 
     private List<CodeFragment> mainCode;
     private Map<String, CodeFragment> labels;
@@ -34,7 +34,6 @@ public class IntermediateCode implements CodeFragment {
         labels.put(label, code);
     }
 
-    @Override
     public String generate() {
         StringBuilder sb = new StringBuilder();
 

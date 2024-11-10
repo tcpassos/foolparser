@@ -36,9 +36,9 @@ terminal Boolean TRUE, FALSE;
 
 non terminal program;
 non terminal class_decl;
-non terminal decl_list;
-non terminal declaration;
-non terminal var_decl;
+non terminal List<CodeFragment> decl_list;
+non terminal CodeFragment declaration;
+non terminal CodeFragment var_decl;
 non terminal Method method_decl;
 non terminal MethodCall method_call;
 non terminal String var_type;
@@ -64,26 +64,43 @@ start with program;
 
 program ::= class_decl;
 
-class_decl ::= LBRACE CLASS IDENTIFIER decl_list RBRACE;
+class_decl ::= LBRACE CLASS IDENTIFIER decl_list:l RBRACE
+                {:
+                    l.forEach(code::append);
+                :};
 
 decl_list ::= /* vazio */
-            | decl_list declaration;
+                {:
+                    RESULT = new ArrayList<>();
+                :}
+            | decl_list:l declaration:d
+                {:
+                    l.add(d);
+                    RESULT = l;
+                :};
 
-declaration ::= var_decl
-              | method_decl;
+declaration ::= var_decl:vd
+                {:
+                    RESULT = vd;
+                :}
+              | method_decl:md
+                {:
+                    RESULT = md;
+                :};
 
-var_decl ::= var_type IDENTIFIER SEMICOLON;
+var_decl ::= var_type:vt IDENTIFIER:var_name SEMICOLON
+                {:
+                    RESULT = new Variable(vt, var_name);
+                :};
 
 method_decl ::= var_type:rt IDENTIFIER:id LPAREN arg_list:args RPAREN LBRACE stmt_list:sl RBRACE
                 {:
                     Method method = new Method(rt, id, args, sl);
-                    code.append(method);
                     RESULT = method;
                 :}
             | VOID IDENTIFIER:id LPAREN arg_list:args RPAREN LBRACE stmt_list:sl RBRACE
                 {:
                     Method method = new Method("void", id, args, sl);
-                    code.append(method);
                     RESULT = method;
                 :};
 
@@ -152,35 +169,35 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
 
 expr ::= expr:e1 PLUS expr:e2
           {:
-              RESULT = new Expression("+", e1.result, e2.result, newTemp());
+              RESULT = new Expression("+", e1.getResult(), e2.getResult(), newTemp());
           :}
        | expr:e1 TIMES expr:e2
           {:
-              RESULT = new Expression("*", e1.result, e2.result, newTemp());
+              RESULT = new Expression("*", e1.getResult(), e2.getResult(), newTemp());
           :}
        | expr:e1 EQ expr:e2
           {:
-              RESULT = new Expression("==", e1.result, e2.result, newTemp());
+              RESULT = new Expression("==", e1.getResult(), e2.getResult(), newTemp());
           :}
        | expr:e1 LT expr:e2
           {:
-              RESULT = new Expression("<", e1.result, e2.result, newTemp());
+              RESULT = new Expression("<", e1.getResult(), e2.getResult(), newTemp());
           :}
        | expr:e1 GT expr:e2
           {:
-              RESULT = new Expression(">", e1.result, e2.result, newTemp());
+              RESULT = new Expression(">", e1.getResult(), e2.getResult(), newTemp());
           :}
        | expr:e1 AND expr:e2
           {:
-              RESULT = new Expression("and", e1.result, e2.result, newTemp());
+              RESULT = new Expression("and", e1.getResult(), e2.getResult(), newTemp());
           :}
        | expr:e1 OR expr:e2
           {:
-              RESULT = new Expression("or", e1.result, e2.result, newTemp());
+              RESULT = new Expression("or", e1.getResult(), e2.getResult(), newTemp());
           :}
        | NOT expr:e
           {:
-              RESULT = new Expression("not", e.result, newTemp());
+              RESULT = new Expression("not", e.getResult(), newTemp());
           :}
        | TRUE
           {:

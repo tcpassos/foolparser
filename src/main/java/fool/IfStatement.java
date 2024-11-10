@@ -11,6 +11,11 @@ public class IfStatement extends Statement {
 
     @Override
     public String generate() {
-        return "ifTrue " + condition.result + " goto " + thenLabel;
+        return "ifTrue " + condition.getResult() + " goto " + thenLabel;
+    }
+
+    @Override
+    public String getResult() {
+        return null;
     }
 }

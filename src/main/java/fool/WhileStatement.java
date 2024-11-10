@@ -12,7 +12,12 @@ public class WhileStatement extends Statement {
     @Override
     public String generate() {
         StringBuilder sb = new StringBuilder();
-        sb.append("while ").append(condition.result).append(" goto ").append(bodyLabel);
+        sb.append("while ").append(condition.getResult()).append(" goto ").append(bodyLabel);
         return sb.toString();
+    }
+
+    @Override
+    public String getResult() {
+        return null;
     }
 }

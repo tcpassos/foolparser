@@ -6,11 +6,7 @@ public class ReturnStatement extends Statement {
 
     public ReturnStatement(Expression expression) {
         this.expression = expression;
-        this.result = expression.result;
-    }
-
-    public String getResult() {
-        return result;
+        this.result = expression.getResult();
     }
 
     @Override
@@ -21,5 +17,10 @@ public class ReturnStatement extends Statement {
             sb.append(exp);
         }
         return sb.toString();
+    }
+
+    @Override
+    public String getResult() {
+        return result;
     }
 }

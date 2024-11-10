@@ -16,7 +16,12 @@ public class AssignmentStatement extends Statement {
         if (!exp.isEmpty()) {
             sb.append(exp).append(System.lineSeparator());
         }
-        sb.append(String.format("%s = %s", identifier, expression.result));
+        sb.append(String.format("%s = %s", identifier, expression.getResult()));
         return sb.toString();
+    }
+
+    @Override
+    public String getResult() {
+        return identifier;
     }
 }

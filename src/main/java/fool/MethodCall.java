@@ -20,19 +20,15 @@ public class MethodCall extends Expression {
         return arguments;
     }
 
-    public String getResult() {
-        return result;
-    }
-
     @Override
     public String generate() {
         StringBuilder sb = new StringBuilder();
 
         for (Expression arg : arguments) {
-            sb.append("param ").append(arg.result).append("\n");
+            sb.append("param ").append(arg.getResult()).append("\n");
         }
 
-        sb.append(result).append(" = call ").append(methodName);
+        sb.append(getResult()).append(" = call ").append(methodName);
 
         return sb.toString();
     }

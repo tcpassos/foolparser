@@ -1,10 +1,10 @@
 package fool;
 
 public class Expression implements CodeFragment {
-    public String op;
-    public String arg1;
-    public String arg2;
-    public String result;
+    private String op;
+    private String arg1;
+    private String arg2;
+    private String result;
 
     public Expression(String result) {
         this(null, null, null, result);
@@ -30,5 +30,10 @@ public class Expression implements CodeFragment {
         } else {
             return String.format("%s = %s %s %s", result, arg1, op, arg2);
         }
+    }
+
+    @Override
+    public String getResult() {
+        return result;
     }
 }

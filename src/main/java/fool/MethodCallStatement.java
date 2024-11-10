@@ -18,11 +18,16 @@ public class MethodCallStatement extends Statement {
         StringBuilder sb = new StringBuilder();
 
         for (Expression arg : arguments) {
-            sb.append("param ").append(arg.result).append("\n");
+            sb.append("param ").append(arg.getResult()).append("\n");
         }
 
         sb.append(result).append(" = call ").append(methodName);
 
         return sb.toString();
+    }
+
+    @Override
+    public String getResult() {
+        return null;
     }
 }

@@ -14,8 +14,13 @@ public class IfElseStatement extends Statement {
     @Override
     public String generate() {
         StringBuilder sb = new StringBuilder();
-        sb.append("ifTrue ").append(condition.result).append(" goto ").append(thenLabel).append(System.lineSeparator());
-        sb.append("ifFalse ").append(condition.result).append(" goto ").append(elseLabel);
+        sb.append("ifTrue ").append(condition.getResult()).append(" goto ").append(thenLabel).append(System.lineSeparator());
+        sb.append("ifFalse ").append(condition.getResult()).append(" goto ").append(elseLabel);
         return sb.toString();
+    }
+
+    @Override
+    public String getResult() {
+        return null;
     }
 }

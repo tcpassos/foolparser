@@ -1,15 +1,15 @@
 package fool;
 
 public class Variable implements CodeFragment {
-    private String type;
-    private String name;
+    private final Type type;
+    private final String name;
 
-    public Variable(String type, String name) {
+    public Variable(Type type, String name) {
         this.type = type;
         this.name = name;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 

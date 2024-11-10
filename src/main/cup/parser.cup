@@ -41,14 +41,14 @@ non terminal CodeFragment declaration;
 non terminal CodeFragment var_decl;
 non terminal Method method_decl;
 non terminal MethodCall method_call;
-non terminal String var_type;
+non terminal Type var_type;
 non terminal Statement stmt;
 non terminal List<Statement> stmt_list;
 non terminal Expression expr;
 non terminal List<Expression> expr_list;
 non terminal List<Expression> expr_list_non_empty;
-non terminal List<String> arg_list;
-non terminal List<String> arg_list_non_empty;
+non terminal List<Variable> arg_list;
+non terminal List<Variable> arg_list_non_empty;
 
 precedence left ELSE;
 precedence nonassoc IF;
@@ -100,7 +100,7 @@ method_decl ::= var_type:rt IDENTIFIER:id LPAREN arg_list:args RPAREN LBRACE stm
                 :}
             | VOID IDENTIFIER:id LPAREN arg_list:args RPAREN LBRACE stmt_list:sl RBRACE
                 {:
-                    Method method = new Method("void", id, args, sl);
+                    Method method = new Method(Type.VOID, id, args, sl);
                     RESULT = method;
                 :};
 
@@ -113,16 +113,16 @@ arg_list ::= /* vazio */
 arg_list_non_empty ::= var_type:t IDENTIFIER:id
                         {:
                             RESULT = new ArrayList<>();
-                            RESULT.add(t + " " + id);
+                            RESULT.add(new Variable(t, id));
                         :}
                      | arg_list_non_empty:l COMMA var_type:t IDENTIFIER:id
                         {:
-                            l.add(t + " " + id);
+                            l.add(new Variable(t, id));
                             RESULT = l;
                         :};
 
-var_type ::= INT   {: RESULT = "int"; :}
-           | BOOL  {: RESULT = "bool"; :};
+var_type ::= INT   {: RESULT = Type.INT; :}
+           | BOOL  {: RESULT = Type.BOOL; :};
 
 method_call ::= IDENTIFIER:method_name LPAREN expr_list:args RPAREN
                 {:

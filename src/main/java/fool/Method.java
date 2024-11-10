@@ -3,19 +3,19 @@ package fool;
 import java.util.List;
 
 public class Method implements CodeFragment {
-    private String returnType;
-    private String name;
-    private List<String> arguments;
-    private List<Statement> statements;
+    private final Type returnType;
+    private final String name;
+    private final List<Variable> arguments;
+    private final List<Statement> statements;
 
-    public Method(String returnType, String name, List<String> arguments, List<Statement> statements) {
+    public Method(Type returnType, String name, List<Variable> arguments, List<Statement> statements) {
         this.returnType = returnType;
         this.name = name;
         this.arguments = arguments == null ? List.of() : arguments;
         this.statements = statements;
     }
 
-    public String getReturnType() {
+    public Type getReturnType() {
         return returnType;
     }
 
@@ -23,7 +23,7 @@ public class Method implements CodeFragment {
         return name;
     }
 
-    public List<String> getArguments() {
+    public List<Variable> getArguments() {
         return arguments;
     }
 
@@ -49,8 +49,8 @@ public class Method implements CodeFragment {
         sb.append(name).append(":\n");
 
         // Arguments
-        for (String arg : arguments) {
-            sb.append("param ").append(arg).append("\n");
+        for (Variable arg : arguments) {
+            sb.append("param ").append(arg.getName()).append("\n");
         }
 
         // Statements

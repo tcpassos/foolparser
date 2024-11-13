@@ -34,10 +34,9 @@ terminal String IDENTIFIER;
 terminal Integer INT_CONST;
 terminal Boolean TRUE, FALSE;
 
-non terminal program;
-non terminal class_decl;
-non terminal List<CodeFragment> decl_list;
-non terminal CodeFragment declaration;
+non terminal ClassDeclaration class_decl;
+non terminal List decl_list;
+non terminal Object declaration;
 non terminal CodeFragment var_decl;
 non terminal Method method_decl;
 non terminal MethodCall method_call;
@@ -60,13 +59,20 @@ precedence left PLUS;
 precedence left TIMES;
 precedence right NOT;
 
-start with program;
+start with class_decl;
 
-program ::= class_decl;
-
-class_decl ::= LBRACE CLASS IDENTIFIER decl_list:l RBRACE
+class_decl ::= LBRACE CLASS IDENTIFIER:name decl_list:dl RBRACE
                 {:
-                    l.forEach(code::append);
+                    List<Variable> fields = new ArrayList<>();
+                    List<Method> methods = new ArrayList<>();
+                    for (var decl : dl) {
+                        if (decl instanceof Variable) {
+                            fields.add((Variable) decl);
+                        } else {
+                            methods.add((Method) decl);
+                        }
+                    }
+                    RESULT = new ClassDeclaration(name, fields, methods);
                 :};
 
 decl_list ::= /* vazio */
@@ -169,51 +175,51 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
 
 expr ::= expr:e1 PLUS expr:e2
           {:
-              RESULT = new Expression("+", e1.getResult(), e2.getResult(), newTemp());
+              RESULT = new BinaryExpression("+", e1, e2, newTemp());
           :}
        | expr:e1 TIMES expr:e2
           {:
-              RESULT = new Expression("*", e1.getResult(), e2.getResult(), newTemp());
+              RESULT = new BinaryExpression("*", e1, e2, newTemp());
           :}
        | expr:e1 EQ expr:e2
           {:
-              RESULT = new Expression("==", e1.getResult(), e2.getResult(), newTemp());
+              RESULT = new BinaryExpression("==", e1, e2, newTemp());
           :}
        | expr:e1 LT expr:e2
           {:
-              RESULT = new Expression("<", e1.getResult(), e2.getResult(), newTemp());
+              RESULT = new BinaryExpression("<", e1, e2, newTemp());
           :}
        | expr:e1 GT expr:e2
           {:
-              RESULT = new Expression(">", e1.getResult(), e2.getResult(), newTemp());
+              RESULT = new BinaryExpression(">", e1, e2, newTemp());
           :}
        | expr:e1 AND expr:e2
           {:
-              RESULT = new Expression("and", e1.getResult(), e2.getResult(), newTemp());
+              RESULT = new BinaryExpression("and", e1, e2, newTemp());
           :}
        | expr:e1 OR expr:e2
           {:
-              RESULT = new Expression("or", e1.getResult(), e2.getResult(), newTemp());
+              RESULT = new BinaryExpression("or", e1, e2, newTemp());
           :}
        | NOT expr:e
           {:
-              RESULT = new Expression("not", e.getResult(), newTemp());
+              RESULT = new UnaryExpression("not", e, newTemp());
           :}
        | TRUE
           {:
-              RESULT = new Expression("true");
+              RESULT = new ConstantExpression("true");
           :}
        | FALSE
           {:
-              RESULT = new Expression("false");
+              RESULT = new ConstantExpression("false");
           :}
        | INT_CONST:ic
           {:
-              RESULT = new Expression(ic.toString());
+              RESULT = new ConstantExpression(ic.toString());
           :}
        | IDENTIFIER:id
           {:
-              RESULT = new Expression(id);
+              RESULT = new ConstantExpression(id);
           :}
        | method_call:mc
           {:

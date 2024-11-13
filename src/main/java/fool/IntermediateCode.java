@@ -17,6 +17,20 @@ public class IntermediateCode {
 
     private int labelCount = 0;
 
+    public void append(String code) {
+        mainCode.add(new CodeFragment() {
+            @Override
+            public String getResult() {
+                return null;
+            }
+
+            @Override
+            public String generate() {
+                return code;
+            }
+        });
+    }
+
     public void append(CodeFragment code) {
         mainCode.add(code);
     }

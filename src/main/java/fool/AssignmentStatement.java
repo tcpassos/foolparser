@@ -10,6 +10,11 @@ public class AssignmentStatement extends Statement {
     }
 
     @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+
+    @Override
     public String generate() {
         StringBuilder sb = new StringBuilder();
         String exp = expression.generate();

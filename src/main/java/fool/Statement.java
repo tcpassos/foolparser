@@ -1,3 +1,3 @@
 package fool;
 
-public abstract class Statement implements CodeFragment { }
+public abstract class Statement implements CodeFragment, Node { }

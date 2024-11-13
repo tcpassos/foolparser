@@ -2,7 +2,7 @@ package fool;
 
 import java.util.List;
 
-public class Method implements CodeFragment {
+public class Method implements Node {
     private final Type returnType;
     private final String name;
     private final List<Variable> arguments;
@@ -13,6 +13,11 @@ public class Method implements CodeFragment {
         this.name = name;
         this.arguments = arguments == null ? List.of() : arguments;
         this.statements = statements;
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 
     public Type getReturnType() {
@@ -31,7 +36,7 @@ public class Method implements CodeFragment {
         return statements;
     }
 
-    public String getResult() {
+    public String getReturnHolder() {
         if (statements.isEmpty()) {
             return null;
         }
@@ -39,31 +44,5 @@ public class Method implements CodeFragment {
             return ((ReturnStatement) statements.get(statements.size() - 1)).getResult();
         }
         return null;
-    }
-
-    @Override
-    public String generate() {
-        StringBuilder sb = new StringBuilder();
-        
-        // Label
-        sb.append(name).append(":\n");
-
-        // Arguments
-        for (Variable arg : arguments) {
-            sb.append("param ").append(arg.getName()).append("\n");
-        }
-
-        // Statements
-        for (Statement stmt : statements) {
-            sb.append(stmt.generate()).append("\n");
-        }
-
-        // Return
-        String result = getResult();
-        if (result != null) {
-            sb.append("return ").append(result).append("\n");
-        }
-
-        return sb.toString();
     }
 }

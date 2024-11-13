@@ -13,9 +13,12 @@ public class Main {
             @SuppressWarnings("deprecation")
             SymbolFactory symbolFactory = new DefaultSymbolFactory();
             Parser parser = new Parser(lexer, symbolFactory);
+            ClassDeclaration ast = (ClassDeclaration) parser.parse().value;
 
-            parser.parse();
-            System.out.println(parser.getIntermediateCode());
+            CodeGenerationVisitor codeGenerator = new CodeGenerationVisitor();
+            ast.accept(codeGenerator);
+            IntermediateCode code = codeGenerator.getCode();
+            System.out.println(code.generate());
         } catch (Exception e) {
             e.printStackTrace();
         }

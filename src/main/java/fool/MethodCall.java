@@ -3,13 +3,14 @@ package fool;
 import java.util.List;
 
 public class MethodCall extends Expression {
-    private String methodName;
-    private List<Expression> arguments;
+    private final String methodName;
+    private final List<Expression> arguments;
+    private final String result;
 
     public MethodCall(String methodName, List<Expression> arguments, String result) {
-        super(result);
         this.methodName = methodName;
         this.arguments = arguments == null ? List.of() : arguments;
+        this.result = result;
     }
 
     public String getMethodName() {
@@ -28,8 +29,13 @@ public class MethodCall extends Expression {
             sb.append("param ").append(arg.getResult()).append("\n");
         }
 
-        sb.append(getResult()).append(" = call ").append(methodName);
+        sb.append(result).append(" = call ").append(methodName);
 
         return sb.toString();
+    }
+
+    @Override
+    public String getResult() {
+        return result;
     }
 }

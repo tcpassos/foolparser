@@ -14,19 +14,11 @@ public class AssignmentStatement extends Statement {
         v.visit(this);
     }
 
-    @Override
-    public String generate() {
-        StringBuilder sb = new StringBuilder();
-        String exp = expression.generate();
-        if (!exp.isEmpty()) {
-            sb.append(exp).append(System.lineSeparator());
-        }
-        sb.append(String.format("%s = %s", identifier, expression.getResult()));
-        return sb.toString();
+    public String getIdentifier() {
+        return identifier;
     }
 
-    @Override
-    public String getResult() {
-        return identifier;
+    public Expression getExpression() {
+        return expression;
     }
 }

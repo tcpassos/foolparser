@@ -1,23 +1,24 @@
 package fool;
 
 public class WhileStatement extends Statement {
-    private Expression condition;
-    private String bodyLabel;
+    private final Expression condition;
+    private Statement body;
 
-    public WhileStatement(Expression condition, String bodyLabel) {
+    public WhileStatement(Expression condition, Statement body) {
         this.condition = condition;
-        this.bodyLabel = bodyLabel;
+        this.body = body;
     }
 
     @Override
-    public String generate() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("while ").append(condition.getResult()).append(" goto ").append(bodyLabel);
-        return sb.toString();
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 
-    @Override
-    public String getResult() {
-        return null;
+    public Expression getCondition() {
+        return condition;
+    }
+
+    public Statement getBody() {
+        return body;
     }
 }

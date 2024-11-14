@@ -151,14 +151,11 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
             :}
        | IF LPAREN expr:condition RPAREN stmt:then
             {:
-                String thenLabel = code.appendLabel(then);
-                RESULT = new IfStatement(condition, thenLabel);
+                RESULT = new IfStatement(condition, then);
             :}
-       | IF LPAREN expr:condition RPAREN stmt:thenStmt ELSE stmt:elseStmt
+       | IF LPAREN expr:condition RPAREN stmt:then ELSE stmt:otherwise
             {:
-                String thenLabel = code.appendLabel(thenStmt);
-                String elseLabel = code.appendLabel(elseStmt);
-                RESULT = new IfElseStatement(condition, thenLabel, elseLabel);
+                RESULT = new IfElseStatement(condition, then, otherwise);
             :}
        | RETURN expr:e SEMICOLON
             {:

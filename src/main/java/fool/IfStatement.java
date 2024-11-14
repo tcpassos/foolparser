@@ -1,21 +1,24 @@
 package fool;
 
 public class IfStatement extends Statement {
-    private Expression condition;
-    private String thenLabel;
+    private final Expression condition;
+    private final Statement then;
 
-    public IfStatement(Expression condition, String thenLabel) {
+    public IfStatement(Expression condition, Statement then) {
         this.condition = condition;
-        this.thenLabel = thenLabel;
+        this.then = then;
     }
 
     @Override
-    public String generate() {
-        return "ifTrue " + condition.getResult() + " goto " + thenLabel;
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 
-    @Override
-    public String getResult() {
-        return null;
+    public Expression getCondition() {
+        return condition;
+    }
+
+    public Statement getThen() {
+        return then;
     }
 }

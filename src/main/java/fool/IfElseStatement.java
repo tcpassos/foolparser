@@ -1,26 +1,30 @@
 package fool;
 
 public class IfElseStatement extends Statement {
-    private Expression condition;
-    private String thenLabel;
-    private String elseLabel;
+    private final Expression condition;
+    private final Statement then;
+    private final Statement otherwise;
 
-    public IfElseStatement(Expression condition, String thenLabel, String elseLabel) {
+    public IfElseStatement(Expression condition, Statement then, Statement otherwise) {
         this.condition = condition;
-        this.thenLabel = thenLabel;
-        this.elseLabel = elseLabel;
+        this.then = then;
+        this.otherwise = otherwise;
     }
 
     @Override
-    public String generate() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("ifTrue ").append(condition.getResult()).append(" goto ").append(thenLabel).append(System.lineSeparator());
-        sb.append("ifFalse ").append(condition.getResult()).append(" goto ").append(elseLabel);
-        return sb.toString();
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 
-    @Override
-    public String getResult() {
-        return null;
+    public Expression getCondition() {
+        return condition;
+    }
+
+    public Statement getThen() {
+        return then;
+    }
+
+    public Statement getOtherwise() {
+        return otherwise;
     }
 }

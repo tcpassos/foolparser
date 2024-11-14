@@ -5,7 +5,7 @@ public class BinaryExpression extends Expression {
     private final String operator;
     private final Expression left;
     private final Expression right;
-    private String result;
+    private final String result;
 
     public BinaryExpression(String operator, Expression left, Expression right, String result) {
         this.operator = operator;
@@ -15,8 +15,20 @@ public class BinaryExpression extends Expression {
     }
 
     @Override
-    public String generate() {
-        return String.format("%s = %s %s %s", getResult(), left.getResult(), operator, right.getResult());
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    public Expression getRight() {
+        return right;
     }
 
     @Override

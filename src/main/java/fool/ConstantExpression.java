@@ -8,13 +8,12 @@ public class ConstantExpression extends Expression {
     }
 
     @Override
-    public String generate() {
-        return "";
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 
     @Override
     public String getResult() {
         return result;
     }
-
 }

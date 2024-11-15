@@ -41,7 +41,7 @@ public class Method implements Node {
             return null;
         }
         if (statements.get(statements.size() - 1) instanceof ReturnStatement) {
-            return ((ReturnStatement) statements.get(statements.size() - 1)).getResult();
+            return ((ReturnStatement) statements.get(statements.size() - 1)).getExpression().getResult();
         }
         return null;
     }

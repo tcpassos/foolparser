@@ -49,12 +49,6 @@ public class CodeGenerationVisitor implements Visitor {
             sb.append(stmt.generate()).append("\n");
         }
 
-        // Return
-        String result = node.getReturnHolder();
-        if (result != null) {
-            sb.append("return ").append(result).append("\n");
-        }
-
         appendCode(sb.toString());
     }
 
@@ -116,6 +110,13 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(ReturnStatement node) {
+        Expression exp = node.getExpression();
+        exp.accept(this);
+        appendCode(String.format("return %s", exp.getResult()));
+    }
+
+    @Override
+    public void visit(MethodCallStatement node) {
         
     }
 

@@ -6,7 +6,6 @@ public class CodeGenerationVisitor implements Visitor {
 
     private CodeContext context;
     private StringBuilder code;
-    private Map<String, Node> labels;
 
     public CodeGenerationVisitor() {
         this.context = new CodeContext();
@@ -33,23 +32,18 @@ public class CodeGenerationVisitor implements Visitor {
      */
     @Override
     public void visit(Method node) {
-        StringBuilder sb = new StringBuilder();
-        
         // Label
-        String methodLabel = context.newLabel(node.getName());
-        sb.append(methodLabel).append(":\n");
+        appendCode("\n" + node.getName() + ":");
 
         // Arguments
         for (Variable arg : node.getArguments()) {
-            sb.append("param ").append(arg.getName()).append("\n");
+            appendCode("param " + arg.getName());
         }
 
         // Statements
         for (Statement stmt : node.getStatements()) {
-            sb.append(stmt.generate()).append("\n");
+            stmt.accept(this);
         }
-
-        appendCode(sb.toString());
     }
 
     /**
@@ -59,65 +53,79 @@ public class CodeGenerationVisitor implements Visitor {
     public void visit(AssignmentStatement node) {
         Expression expressionToAssign = node.getExpression();
         expressionToAssign.accept(this);
-        String toAppend = String.format("%s = %s", node.getIdentifier(), expressionToAssign.getResult());
+        String toAppend = String.format("%s = %s", node.getIdentifier(), context.getNodeTemp(expressionToAssign));
         appendCode(toAppend);
     }
 
+    /**
+     * Visit a if statement node.
+     */
     @Override
     public void visit(IfStatement node) {
         Expression condition = node.getCondition();
         condition.accept(this);
         
         Statement then = node.getThen();
-        String thenLabel = context.newLabel("then");
-        appendLabel(thenLabel, then);
+        String thenLabel = context.getSubtreeLabel(then, "then");
 
-        String toAppend = String.format("ifTrue %s goto %s", condition.getResult(), thenLabel);
+        String toAppend = String.format("ifTrue %s goto %s", context.getNodeTemp(condition), thenLabel);
         appendCode(toAppend);
     }
 
+    /**
+     * Visit a if else statement node.
+     */
     @Override
     public void visit(IfElseStatement node) {
         Expression condition = node.getCondition();
         condition.accept(this);
         
         Statement then = node.getThen();
-        String thenLabel = context.newLabel("then");
-        appendLabel(thenLabel, then);
+        String thenLabel = context.getSubtreeLabel(then, "then");
 
         Statement otherwise = node.getOtherwise();
-        String elseLabel = context.newLabel("else");
-        appendLabel(elseLabel, otherwise);
+        String elseLabel = context.getSubtreeLabel(otherwise, "else");
 
-        String toAppend = String.format("ifTrue %s goto %s", condition.getResult(), thenLabel);
+        String toAppend = String.format("ifTrue %s goto %s", context.getNodeTemp(condition), thenLabel);
         appendCode(toAppend);
-        toAppend = String.format("ifFalse %s goto %s", condition.getResult(), elseLabel);
+        toAppend = String.format("ifFalse %s goto %s", context.getNodeTemp(condition), elseLabel);
         appendCode(toAppend);
     }
 
+    /**
+     * Visit a while statement node.
+     */
     @Override
     public void visit(WhileStatement node) {
         Expression condition = node.getCondition();
         condition.accept(this);
 
         Statement body = node.getBody();
-        String bodyLabel = context.newLabel("body");
-        appendLabel(bodyLabel, body);
+        String bodyLabel = context.getSubtreeLabel(body, "body");
 
-        String toAppend = String.format("while %s goto %s", condition.getResult(), bodyLabel);
+        String toAppend = String.format("while %s goto %s", context.getNodeTemp(condition), bodyLabel);
         appendCode(toAppend);
     }
 
+    /**
+     * Visit a return statement node.
+     */
     @Override
     public void visit(ReturnStatement node) {
         Expression exp = node.getExpression();
         exp.accept(this);
-        appendCode(String.format("return %s", exp.getResult()));
+        appendCode(String.format("return %s", context.getNodeTemp(exp)));
     }
 
+    /**
+     * Visit a method call expression node.
+     */
     @Override
-    public void visit(MethodCallStatement node) {
-        
+    public void visit(MethodCall node) {
+        for (Expression arg : node.getArguments()) {
+            arg.accept(this);
+        }
+        appendCode(context.getNodeTemp(node) + " = call " + node.getMethodName());
     }
 
     /**
@@ -133,7 +141,7 @@ public class CodeGenerationVisitor implements Visitor {
     public void visit(UnaryExpression node) {
         Expression expressionToAssign = node.getExpression();
         expressionToAssign.accept(this);
-        String toAppend = String.format("%s = %s %s", node.getResult(), node.getOperator(), expressionToAssign.getResult());
+        String toAppend = String.format("%s = %s %s", context.getNodeTemp(node), node.getOperator(), context.getNodeTemp(expressionToAssign));
         appendCode(toAppend);
     }
 
@@ -146,7 +154,7 @@ public class CodeGenerationVisitor implements Visitor {
         Expression right = node.getRight();
         left.accept(this);
         right.accept(this);
-        String toAppend = String.format("%s = %s %s %s", node.getResult(), left.getResult(), node.getOperator(), right.getResult());
+        String toAppend = String.format("%s = %s %s %s", context.getNodeTemp(node), context.getNodeTemp(left), node.getOperator(), context.getNodeTemp(right));
         appendCode(toAppend);
     }
 
@@ -160,27 +168,12 @@ public class CodeGenerationVisitor implements Visitor {
     }
 
     /**
-     * Append a label to the code buffer and associate it with a node.
-     *
-     * @param label The label name.
-     * @param node The node to associate with the label.
-     */
-    private void appendLabel(String label, Node node) {
-        if (labels.containsKey(label)) {
-            throw new IllegalArgumentException("Label already exists: " + label);
-        }
-        labels.put(label, node);
-    }
-
-    /**
      * Process all labels in the labels generating code for each one.
      */
     private void processLabels() {
-        code.append("// LABELS:\n");
-        for (Map.Entry<String, Node> entry : labels.entrySet()) {
-            appendCode(entry.getKey() + ":");
+        for (Map.Entry<String, Node> entry : context.getSubtrees().entrySet()) {
+            appendCode("\n" + entry.getKey() + ":");
             entry.getValue().accept(this);
         }
-        labels.clear();
     }
 }

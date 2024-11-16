@@ -35,14 +35,4 @@ public class Method implements Node {
     public List<Statement> getStatements() {
         return statements;
     }
-
-    public String getReturnHolder() {
-        if (statements.isEmpty()) {
-            return null;
-        }
-        if (statements.get(statements.size() - 1) instanceof ReturnStatement) {
-            return ((ReturnStatement) statements.get(statements.size() - 1)).getExpression().getResult();
-        }
-        return null;
-    }
 }

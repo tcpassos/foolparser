@@ -5,17 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 parser code {:
-    private IntermediateCode code = new IntermediateCode();
-    private int tempCount = 0;
-
-    private String newTemp() {
-        return "t" + tempCount++;
-    }
-
-    public String getIntermediateCode() {
-        return code.generate();
-    }
-
     public void report_error(String message, Object info) {
         Symbol symbol = (Symbol) info;
         String error = "Token '" + symbol.value + "' encontrado não esperado.";
@@ -132,7 +121,7 @@ var_type ::= INT   {: RESULT = Type.INT; :}
 
 method_call ::= IDENTIFIER:method_name LPAREN expr_list:args RPAREN
                 {:
-                    RESULT = new MethodCall(method_name, args, newTemp());
+                    RESULT = new MethodCall(method_name, args);
                 :};
 
 stmt_list ::= /* vazio */
@@ -163,44 +152,44 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
             :}
        | WHILE LPAREN expr:condition RPAREN stmt:stmt
             {:
-                RESULT = new WhileStatement(condition, code.appendLabel(stmt));
+                RESULT = new WhileStatement(condition, stmt);
             :}
        | method_call:mc SEMICOLON
             {:
-                RESULT = new MethodCallStatement(mc.getMethodName(), mc.getArguments(), mc.getResult());
+                RESULT = mc;
             :};
 
 expr ::= expr:e1 PLUS expr:e2
           {:
-              RESULT = new BinaryExpression("+", e1, e2, newTemp());
+              RESULT = new BinaryExpression("+", e1, e2);
           :}
        | expr:e1 TIMES expr:e2
           {:
-              RESULT = new BinaryExpression("*", e1, e2, newTemp());
+              RESULT = new BinaryExpression("*", e1, e2);
           :}
        | expr:e1 EQ expr:e2
           {:
-              RESULT = new BinaryExpression("==", e1, e2, newTemp());
+              RESULT = new BinaryExpression("==", e1, e2);
           :}
        | expr:e1 LT expr:e2
           {:
-              RESULT = new BinaryExpression("<", e1, e2, newTemp());
+              RESULT = new BinaryExpression("<", e1, e2);
           :}
        | expr:e1 GT expr:e2
           {:
-              RESULT = new BinaryExpression(">", e1, e2, newTemp());
+              RESULT = new BinaryExpression(">", e1, e2);
           :}
        | expr:e1 AND expr:e2
           {:
-              RESULT = new BinaryExpression("and", e1, e2, newTemp());
+              RESULT = new BinaryExpression("and", e1, e2);
           :}
        | expr:e1 OR expr:e2
           {:
-              RESULT = new BinaryExpression("or", e1, e2, newTemp());
+              RESULT = new BinaryExpression("or", e1, e2);
           :}
        | NOT expr:e
           {:
-              RESULT = new UnaryExpression("not", e, newTemp());
+              RESULT = new UnaryExpression("not", e);
           :}
        | TRUE
           {:

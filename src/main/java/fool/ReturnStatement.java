@@ -1,6 +1,6 @@
 package fool;
 
-public class ReturnStatement extends Statement {
+public class ReturnStatement implements Statement {
     private final Expression expression;
 
     public ReturnStatement(Expression expression) {

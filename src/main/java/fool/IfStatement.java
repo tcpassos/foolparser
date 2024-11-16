@@ -1,6 +1,6 @@
 package fool;
 
-public class IfStatement extends Statement {
+public class IfStatement implements Statement {
     private final Expression condition;
     private final Statement then;
 

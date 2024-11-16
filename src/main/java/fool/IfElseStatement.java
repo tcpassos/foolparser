@@ -1,6 +1,6 @@
 package fool;
 
-public class IfElseStatement extends Statement {
+public class IfElseStatement implements Statement {
     private final Expression condition;
     private final Statement then;
     private final Statement otherwise;

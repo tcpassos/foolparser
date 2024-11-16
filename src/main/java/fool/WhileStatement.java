@@ -1,6 +1,6 @@
 package fool;
 
-public class WhileStatement extends Statement {
+public class WhileStatement implements Statement {
     private final Expression condition;
     private Statement body;
 

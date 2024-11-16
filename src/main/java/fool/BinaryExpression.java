@@ -1,17 +1,15 @@
 package fool;
 
-public class BinaryExpression extends Expression {
+public class BinaryExpression implements Expression {
 
     private final String operator;
     private final Expression left;
     private final Expression right;
-    private final String result;
 
-    public BinaryExpression(String operator, Expression left, Expression right, String result) {
+    public BinaryExpression(String operator, Expression left, Expression right) {
         this.operator = operator;
         this.left = left;
         this.right = right;
-        this.result = result;
     }
 
     @Override
@@ -29,10 +27,5 @@ public class BinaryExpression extends Expression {
 
     public Expression getRight() {
         return right;
-    }
-
-    @Override
-    public String getResult() {
-        return result;
     }
 }

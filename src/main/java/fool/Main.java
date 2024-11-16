@@ -17,8 +17,7 @@ public class Main {
 
             CodeGenerationVisitor codeGenerator = new CodeGenerationVisitor();
             ast.accept(codeGenerator);
-            IntermediateCode code = codeGenerator.getCode();
-            System.out.println(code.generate());
+            System.out.println(codeGenerator.getCode());
         } catch (Exception e) {
             e.printStackTrace();
         }

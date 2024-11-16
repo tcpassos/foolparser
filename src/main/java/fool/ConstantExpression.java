@@ -1,10 +1,10 @@
 package fool;
 
-public class ConstantExpression extends Expression {
-    private final String result;
+public class ConstantExpression implements Expression {
+    private final String value;
 
-    public ConstantExpression(String result) {
-        this.result = result;
+    public ConstantExpression(String value) {
+        this.value = value;
     }
 
     @Override
@@ -12,8 +12,7 @@ public class ConstantExpression extends Expression {
         v.visit(this);
     }
 
-    @Override
-    public String getResult() {
-        return result;
+    public String getValue() {
+        return value;
     }
 }

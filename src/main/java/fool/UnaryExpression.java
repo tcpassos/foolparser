@@ -1,14 +1,12 @@
 package fool;
 
-public class UnaryExpression extends Expression {
+public class UnaryExpression implements Expression {
     private final String operator;
     private final Expression expression;
-    private final String result;
 
-    public UnaryExpression(String operator, Expression expression, String result) {
+    public UnaryExpression(String operator, Expression expression) {
         this.operator = operator;
         this.expression = expression;
-        this.result = result;
     }
 
     @Override
@@ -23,10 +21,4 @@ public class UnaryExpression extends Expression {
     public Expression getExpression() {
         return expression;
     }
-
-    @Override
-    public String getResult() {
-        return result;
-    }
-
 }

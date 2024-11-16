@@ -1,6 +1,6 @@
 package fool;
 
-public class AssignmentStatement extends Statement {
+public class AssignmentStatement implements Statement {
     private String identifier;
     private Expression expression;
 

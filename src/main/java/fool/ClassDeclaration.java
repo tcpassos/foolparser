@@ -5,10 +5,10 @@ import java.util.List;
 public class ClassDeclaration implements Node {
 
     private final String name;
-    private final List<Variable> fields;
+    private final List<VariableDeclaration> fields;
     private final List<Method> methods;
 
-    public ClassDeclaration(String name, List<Variable> fields, List<Method> methods) {
+    public ClassDeclaration(String name, List<VariableDeclaration> fields, List<Method> methods) {
         this.name = name;
         this.fields = fields;
         this.methods = methods;
@@ -23,7 +23,7 @@ public class ClassDeclaration implements Node {
         return name;
     }
 
-    public List<Variable> getFields() {
+    public List<VariableDeclaration> getFields() {
         return fields;
     }
 

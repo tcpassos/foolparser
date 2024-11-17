@@ -2,14 +2,16 @@ package fool;
 
 public class BinaryExpression implements Expression {
 
-    private final String operator;
+    private final Operator operator;
     private final Expression left;
     private final Expression right;
+    private Type type;
 
-    public BinaryExpression(String operator, Expression left, Expression right) {
+    public BinaryExpression(Operator operator, Expression left, Expression right) {
         this.operator = operator;
         this.left = left;
         this.right = right;
+        this.type = null;
     }
 
     @Override
@@ -17,7 +19,7 @@ public class BinaryExpression implements Expression {
         v.visit(this);
     }
 
-    public String getOperator() {
+    public Operator getOperator() {
         return operator;
     }
 
@@ -27,5 +29,15 @@ public class BinaryExpression implements Expression {
 
     public Expression getRight() {
         return right;
+    }
+
+    @Override
+    public Type getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(Type type) {
+        this.type = type;
     }
 }

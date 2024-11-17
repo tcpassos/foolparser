@@ -1,17 +1,6 @@
 package fool;
 
-public enum Type {
-    VOID("void"),
-    INT("int"),
-    BOOL("bool");
-
-    private final String name;
-
-    Type(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+public abstract class Type {
+    public abstract boolean isCompatible(Type other);
+    public abstract String toString();
 }

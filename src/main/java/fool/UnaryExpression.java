@@ -1,10 +1,10 @@
 package fool;
 
 public class UnaryExpression implements Expression {
-    private final String operator;
+    private final Operator operator;
     private final Expression expression;
 
-    public UnaryExpression(String operator, Expression expression) {
+    public UnaryExpression(Operator operator, Expression expression) {
         this.operator = operator;
         this.expression = expression;
     }
@@ -14,11 +14,21 @@ public class UnaryExpression implements Expression {
         v.visit(this);
     }
 
-    public String getOperator() {
+    public Operator getOperator() {
         return operator;
     }
 
     public Expression getExpression() {
         return expression;
+    }
+
+    @Override
+    public Type getType() {
+        return expression.getType();
+    }
+
+    @Override
+    public void setType(Type type) {
+        expression.setType(type);
     }
 }

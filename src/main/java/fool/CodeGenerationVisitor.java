@@ -27,6 +27,9 @@ public class CodeGenerationVisitor implements Visitor {
         processLabels();
     }
 
+    @Override
+    public void visit(VariableDeclaration node) { /* Not needed */ }
+
     /**
      * Visit a method node.
      */
@@ -36,7 +39,7 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode("\n" + node.getName() + ":");
 
         // Arguments
-        for (Variable arg : node.getArguments()) {
+        for (VariableDeclaration arg : node.getArguments()) {
             appendCode("param " + arg.getName());
         }
 
@@ -133,6 +136,9 @@ public class CodeGenerationVisitor implements Visitor {
      */
     @Override
     public void visit(ConstantExpression node) { /* Not needed */ }
+
+    @Override
+    public void visit(VariableExpression node) { /* Not needed */ }
 
     /**
      * Visit a method call statement node.

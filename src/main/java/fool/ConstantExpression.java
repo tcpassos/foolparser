@@ -1,10 +1,17 @@
 package fool;
 
 public class ConstantExpression implements Expression {
-    private final String value;
+    private final Object value;
+    private Type type;
 
-    public ConstantExpression(String value) {
+    public ConstantExpression(Integer value) {
         this.value = value;
+        this.type = new IntType();
+    }
+
+    public ConstantExpression(Boolean value) {
+        this.value = value;
+        this.type = new BoolType();
     }
 
     @Override
@@ -12,7 +19,16 @@ public class ConstantExpression implements Expression {
         v.visit(this);
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(Type type) {
+        this.type = type;
     }
 }

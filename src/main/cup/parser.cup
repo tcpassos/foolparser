@@ -25,8 +25,8 @@ terminal Boolean TRUE, FALSE;
 
 non terminal ClassDeclaration class_decl;
 non terminal List decl_list;
-non terminal Object declaration;
-non terminal CodeFragment var_decl;
+non terminal Node declaration;
+non terminal VariableDeclaration var_decl;
 non terminal Method method_decl;
 non terminal MethodCall method_call;
 non terminal Type var_type;
@@ -35,8 +35,8 @@ non terminal List<Statement> stmt_list;
 non terminal Expression expr;
 non terminal List<Expression> expr_list;
 non terminal List<Expression> expr_list_non_empty;
-non terminal List<Variable> arg_list;
-non terminal List<Variable> arg_list_non_empty;
+non terminal List<VariableDeclaration> arg_list;
+non terminal List<VariableDeclaration> arg_list_non_empty;
 
 precedence left ELSE;
 precedence nonassoc IF;
@@ -52,11 +52,11 @@ start with class_decl;
 
 class_decl ::= LBRACE CLASS IDENTIFIER:name decl_list:dl RBRACE
                 {:
-                    List<Variable> fields = new ArrayList<>();
+                    List<VariableDeclaration> fields = new ArrayList<>();
                     List<Method> methods = new ArrayList<>();
                     for (var decl : dl) {
-                        if (decl instanceof Variable) {
-                            fields.add((Variable) decl);
+                        if (decl instanceof VariableDeclaration) {
+                            fields.add((VariableDeclaration) decl);
                         } else {
                             methods.add((Method) decl);
                         }
@@ -85,7 +85,7 @@ declaration ::= var_decl:vd
 
 var_decl ::= var_type:vt IDENTIFIER:var_name SEMICOLON
                 {:
-                    RESULT = new Variable(vt, var_name);
+                    RESULT = new VariableDeclaration(vt, var_name);
                 :};
 
 method_decl ::= var_type:rt IDENTIFIER:id LPAREN arg_list:args RPAREN LBRACE stmt_list:sl RBRACE
@@ -95,7 +95,7 @@ method_decl ::= var_type:rt IDENTIFIER:id LPAREN arg_list:args RPAREN LBRACE stm
                 :}
             | VOID IDENTIFIER:id LPAREN arg_list:args RPAREN LBRACE stmt_list:sl RBRACE
                 {:
-                    Method method = new Method(Type.VOID, id, args, sl);
+                    Method method = new Method(new VoidType(), id, args, sl);
                     RESULT = method;
                 :};
 
@@ -108,16 +108,16 @@ arg_list ::= /* vazio */
 arg_list_non_empty ::= var_type:t IDENTIFIER:id
                         {:
                             RESULT = new ArrayList<>();
-                            RESULT.add(new Variable(t, id));
+                            RESULT.add(new VariableDeclaration(t, id));
                         :}
                      | arg_list_non_empty:l COMMA var_type:t IDENTIFIER:id
                         {:
-                            l.add(new Variable(t, id));
+                            l.add(new VariableDeclaration(t, id));
                             RESULT = l;
                         :};
 
-var_type ::= INT   {: RESULT = Type.INT; :}
-           | BOOL  {: RESULT = Type.BOOL; :};
+var_type ::= INT   {: RESULT = new IntType(); :}
+           | BOOL  {: RESULT = new BoolType(); :};
 
 method_call ::= IDENTIFIER:method_name LPAREN expr_list:args RPAREN
                 {:
@@ -154,6 +154,10 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
             {:
                 RESULT = new WhileStatement(condition, stmt);
             :}
+       | var_decl:vd
+            {:
+                RESULT = vd;
+            :}
        | method_call:mc SEMICOLON
             {:
                 RESULT = mc;
@@ -161,51 +165,51 @@ stmt ::= IDENTIFIER:id ASSIGN expr:e SEMICOLON
 
 expr ::= expr:e1 PLUS expr:e2
           {:
-              RESULT = new BinaryExpression("+", e1, e2);
+              RESULT = new BinaryExpression(Operator.PLUS, e1, e2);
           :}
        | expr:e1 TIMES expr:e2
           {:
-              RESULT = new BinaryExpression("*", e1, e2);
+              RESULT = new BinaryExpression(Operator.TIMES, e1, e2);
           :}
        | expr:e1 EQ expr:e2
           {:
-              RESULT = new BinaryExpression("==", e1, e2);
+              RESULT = new BinaryExpression(Operator.EQ, e1, e2);
           :}
        | expr:e1 LT expr:e2
           {:
-              RESULT = new BinaryExpression("<", e1, e2);
+              RESULT = new BinaryExpression(Operator.LT, e1, e2);
           :}
        | expr:e1 GT expr:e2
           {:
-              RESULT = new BinaryExpression(">", e1, e2);
+              RESULT = new BinaryExpression(Operator.GT, e1, e2);
           :}
        | expr:e1 AND expr:e2
           {:
-              RESULT = new BinaryExpression("and", e1, e2);
+              RESULT = new BinaryExpression(Operator.AND, e1, e2);
           :}
        | expr:e1 OR expr:e2
           {:
-              RESULT = new BinaryExpression("or", e1, e2);
+              RESULT = new BinaryExpression(Operator.OR, e1, e2);
           :}
        | NOT expr:e
           {:
-              RESULT = new UnaryExpression("not", e);
+              RESULT = new UnaryExpression(Operator.NOT, e);
           :}
        | TRUE
           {:
-              RESULT = new ConstantExpression("true");
+              RESULT = new ConstantExpression(true);
           :}
        | FALSE
           {:
-              RESULT = new ConstantExpression("false");
+              RESULT = new ConstantExpression(false);
           :}
        | INT_CONST:ic
           {:
-              RESULT = new ConstantExpression(ic.toString());
+              RESULT = new ConstantExpression(ic);
           :}
        | IDENTIFIER:id
           {:
-              RESULT = new ConstantExpression(id);
+              RESULT = new VariableExpression(id);
           :}
        | method_call:mc
           {:

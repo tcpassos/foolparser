@@ -2,6 +2,7 @@ package fool;
 
 public interface Visitor {
     void visit(ClassDeclaration node);
+    void visit(VariableDeclaration node);
     void visit(Method node);
     void visit(AssignmentStatement node);
     void visit(IfStatement node);
@@ -10,6 +11,7 @@ public interface Visitor {
     void visit(ReturnStatement node);
     void visit(MethodCall node);
     void visit(ConstantExpression node);
+    void visit(VariableExpression node);
     void visit(UnaryExpression node);
     void visit(BinaryExpression node);
 }

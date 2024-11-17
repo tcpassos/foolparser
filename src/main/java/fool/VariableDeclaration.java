@@ -1,10 +1,15 @@
 package fool;
 
-public class Variable implements CodeFragment {
+public class VariableDeclaration implements Statement {
     private final Type type;
     private final String name;
 
-    public Variable(Type type, String name) {
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+
+    public VariableDeclaration(Type type, String name) {
         this.type = type;
         this.name = name;
     }
@@ -15,14 +20,5 @@ public class Variable implements CodeFragment {
 
     public String getName() {
         return name;
-    }
-
-    public String getResult() {
-        return name;
-    }
-
-    @Override
-    public String generate() {
-        return "var " + name + " " + type;
     }
 }

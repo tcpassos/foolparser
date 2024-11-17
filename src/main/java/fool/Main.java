@@ -12,9 +12,20 @@ public class Main {
             Lexer lexer = new Lexer(new FileReader(resource));
             @SuppressWarnings("deprecation")
             SymbolFactory symbolFactory = new DefaultSymbolFactory();
+            
+            // Syntax analysis and AST construction
             Parser parser = new Parser(lexer, symbolFactory);
             ClassDeclaration ast = (ClassDeclaration) parser.parse().value;
 
+            // Semantic analysis
+            SemanticAnalyzerVisitor semanticAnalyzer = new SemanticAnalyzerVisitor();
+            ast.accept(semanticAnalyzer);
+            if (semanticAnalyzer.hasErrors()) {
+                semanticAnalyzer.printErrors();
+                return;
+            }
+
+            // Code generation
             CodeGenerationVisitor codeGenerator = new CodeGenerationVisitor();
             ast.accept(codeGenerator);
             System.out.println(codeGenerator.getCode());

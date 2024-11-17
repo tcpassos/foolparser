@@ -38,7 +38,13 @@ public class Main {
             // Code generation
             CodeGenerationVisitor codeGenerator = new CodeGenerationVisitor();
             ast.accept(codeGenerator);
-            System.out.println(codeGenerator.getCode());
+
+            // Write code to file
+            try (FileWriter writer = new FileWriter("output.txt")) {
+                writer.write(codeGenerator.getCode());
+            } catch (IOException e) {
+                System.err.println("Error writing code to file: " + e.getMessage());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

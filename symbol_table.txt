@@ -1,0 +1,8 @@
+  Variable(name='num', type=int)
+  Variable(name='num2', type=int)
+  Variable(name='flag', type=bool)
+  Method(name='sum', return=int, params=(int a, int b))
+    Variable(name='a', type=int)
+    Variable(name='b', type=int)
+  Method(name='test', return=int, params=())
+  Method(name='main', return=void, params=())

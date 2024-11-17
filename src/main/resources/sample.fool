@@ -3,11 +3,8 @@
     int num2;
     bool flag;
 
-    void main() {
-        flag = not False;
-        if (flag) num = 10; else num = 0;
-        while (num < 20) num = num + 1;
-        test();
+    int sum(int a, int b) {
+        return a + b;
     }
 
     int test() {
@@ -16,7 +13,10 @@
         return sum(num, num2);
     }
 
-    int sum(int a, int b) {
-        return a + b;
+    void main() {
+        flag = not False;
+        if (flag) num = 10; else num = 0;
+        while (num < 20) num = num + 1;
+        test();
     }
 }

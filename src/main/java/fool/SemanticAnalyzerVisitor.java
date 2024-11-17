@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SemanticAnalyzerVisitor implements Visitor {
+    private SymbolTable globalScope;
     private SymbolTable currentScope;
     private List<String> errors;
     private Type currentMethodReturnType;
 
     public SemanticAnalyzerVisitor() {
-        this.currentScope = new SymbolTable();
+        this.globalScope = new SymbolTable();
+        this.currentScope = globalScope;
         this.errors = new ArrayList<>();
     }
 
@@ -25,45 +27,24 @@ public class SemanticAnalyzerVisitor implements Visitor {
         errors.add(message);
     }
 
-    private void enterScope() {
-        currentScope = new SymbolTable(currentScope);
+    private void enterScope(SymbolTable newScope) {
+        currentScope = newScope;
     }
 
     private void exitScope() {
         currentScope = currentScope.getParent();
     }
 
+    public String getSerializedSymbolTable() {
+        return globalScope.serialize();
+    }    
+
     // Visitor methods
 
     @Override
     public void visit(ClassDeclaration node) {
-        // Enter class scope
-        enterScope();
-
-        // Declare fields
         node.getFields().forEach(f -> f.accept(this));
-
-        // Declare methods
-        for (Method method : node.getMethods()) {
-            List<ParameterSymbolInfo> params = new ArrayList<>();
-            for (VariableDeclaration param : method.getArguments()) {
-                params.add(new ParameterSymbolInfo(param.getName(), param.getType()));
-            }
-            MethodSymbolInfo methodSymbol = new MethodSymbolInfo(method.getName(), method.getReturnType(), params);
-            try {
-                currentScope.declare(methodSymbol);
-            } catch (SemanticException e) {
-                reportError("Method " + method.getName() + ": " + e.getMessage());
-            }
-        }
-
-        // Visit methods
-        for (Method method : node.getMethods()) {
-            method.accept(this);
-        }
-
-        // Exit class scope
-        exitScope();
+        node.getMethods().forEach(m -> m.accept(this));
     }
 
     @Override
@@ -79,8 +60,20 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(Method node) {
-        // Enter method scope
-        enterScope();
+        // Declare method
+        List<ParameterSymbolInfo> params = node.getArguments()
+                                               .stream()
+                                               .map(p -> new ParameterSymbolInfo(p.getName(), p.getType()))
+                                               .toList();
+        MethodSymbolInfo methodSymbol = new MethodSymbolInfo(node.getName(), node.getReturnType(), params);
+        try {
+            currentScope.declare(methodSymbol);
+        } catch (SemanticException e) {
+            reportError("Method " + node.getName() + ": " + e.getMessage());
+        }
+
+        // Create a child scope for the method
+        enterScope(currentScope.createChildScope());
         currentMethodReturnType = node.getReturnType();
 
         // Declare parameters
@@ -93,14 +86,12 @@ public class SemanticAnalyzerVisitor implements Visitor {
             }
         }
 
-        // Visit statements
         for (Statement stmt : node.getStatements()) {
             stmt.accept(this);
         }
 
-        // Exit method scope
-        currentMethodReturnType = null;
         exitScope();
+        currentMethodReturnType = null;
     }
 
     @Override
@@ -138,9 +129,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
         }
 
         // Visit then branch
-        enterScope();
         node.getThen().accept(this);
-        exitScope();
     }
 
     @Override
@@ -154,15 +143,9 @@ public class SemanticAnalyzerVisitor implements Visitor {
             reportError("Condition in 'if-else' statement must be of type bool.");
         }
 
-        // Visit then branch
-        enterScope();
+        // Visit then and else branch
         node.getThen().accept(this);
-        exitScope();
-
-        // Visit else branch
-        enterScope();
         node.getOtherwise().accept(this);
-        exitScope();
     }
 
     @Override
@@ -177,9 +160,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
         }
 
         // Visit body
-        enterScope();
         node.getBody().accept(this);
-        exitScope();
     }
 
     @Override

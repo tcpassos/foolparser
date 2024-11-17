@@ -1,6 +1,8 @@
 package fool;
 
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import java_cup.runtime.DefaultSymbolFactory;
 import java_cup.runtime.SymbolFactory;
@@ -23,6 +25,14 @@ public class Main {
             if (semanticAnalyzer.hasErrors()) {
                 semanticAnalyzer.printErrors();
                 return;
+            }
+
+            // Write symbol table to file
+            String symbolTableStr = semanticAnalyzer.getSerializedSymbolTable();
+            try (FileWriter writer = new FileWriter("symbol_table.txt")) {
+                writer.write(symbolTableStr);
+            } catch (IOException e) {
+                System.err.println("Error writing symbol table to file: " + e.getMessage());
             }
 
             // Code generation

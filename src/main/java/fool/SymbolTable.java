@@ -1,33 +1,46 @@
 package fool;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SymbolTable {
-    private Map<String, SymbolInfo> symbols;
+public class SymbolTable implements SymbolTableEntry {
     private SymbolTable parent;
+    private List<SymbolTableEntry> entries;
 
     public SymbolTable() {
         this(null);
     }
 
     public SymbolTable(SymbolTable parent) {
-        this.symbols = new HashMap<>();
         this.parent = parent;
+        this.entries = new ArrayList<>();
     }
 
     public void declare(SymbolInfo symbol) throws SemanticException {
-        if (symbols.containsKey(symbol.getName())) {
-            throw new SemanticException("Symbol '" + symbol.getName() + "' already declared in this scope.");
+        // Verificar duplicatas
+        for (SymbolTableEntry entry : entries) {
+            if (entry instanceof SymbolInfo) {
+                SymbolInfo existingSymbol = (SymbolInfo) entry;
+                if (existingSymbol.getName().equals(symbol.getName())) {
+                    throw new SemanticException("Symbol '" + symbol.getName() + "' already declared in this scope.");
+                }
+            }
         }
-        symbols.put(symbol.getName(), symbol);
+        entries.add(symbol);
     }
 
     public SymbolInfo lookup(String name) {
-        SymbolInfo symbol = symbols.get(name);
-        if (symbol != null) {
-            return symbol;
-        } else if (parent != null) {
+        // Procurar neste escopo
+        for (SymbolTableEntry entry : entries) {
+            if (entry instanceof SymbolInfo) {
+                SymbolInfo symbol = (SymbolInfo) entry;
+                if (symbol.getName().equals(name)) {
+                    return symbol;
+                }
+            }
+        }
+        // Procurar nos escopos ancestrais
+        if (parent != null) {
             return parent.lookup(name);
         }
         return null;
@@ -35,5 +48,34 @@ public class SymbolTable {
 
     public SymbolTable getParent() {
         return parent;
+    }
+
+    public SymbolTable createChildScope() {
+        SymbolTable childScope = new SymbolTable(this);
+        entries.add(childScope);
+        return childScope;
+    }
+
+    public String serialize() {
+        StringBuilder sb = new StringBuilder();
+        serializeHelper(sb, 0);
+        return sb.toString();
+    }
+
+    private void serializeHelper(StringBuilder sb, int indentLevel) {
+        if (entries.isEmpty()) {
+            return;
+        }
+        String indent = "  ".repeat(indentLevel);
+
+        for (SymbolTableEntry entry : entries) {
+            if (entry instanceof SymbolInfo) {
+                SymbolInfo symbol = (SymbolInfo) entry;
+                sb.append(indent).append("  ").append(symbol).append("\n");
+            } else if (entry instanceof SymbolTable) {
+                SymbolTable childScope = (SymbolTable) entry;
+                childScope.serializeHelper(sb, indentLevel + 1);
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 package fool;
 
-public abstract class SymbolInfo {
+public abstract class SymbolInfo implements SymbolTableEntry {
     private String name;
     private Type type;
 
@@ -16,4 +16,10 @@ public abstract class SymbolInfo {
     public Type getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Symbol(name='%s', type=%s)", name, type);
+    }
+    
 }

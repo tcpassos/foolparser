@@ -33,9 +33,6 @@ public class CodeGenerationVisitor implements Visitor {
         return code.toString();
     }
 
-    /**
-     * Visit a class declaration node.
-     */
     @Override
     public void visit(ClassDeclaration node) {
         for (Method method : node.getMethods()) {
@@ -45,17 +42,14 @@ public class CodeGenerationVisitor implements Visitor {
     }
 
     @Override
-    public void visit(VariableDeclaration node) { /* Not needed */ }
+    public void visit(VariableDeclaration node) { }
 
-    /**
-     * Visit a method node.
-     */
     @Override
     public void visit(Method node) {
         // Label
         appendCode("\n" + node.getName() + ":");
 
-        // Arguments
+        // Argumentos
         for (VariableDeclaration arg : node.getArguments()) {
             appendCode("param " + arg.getName());
         }
@@ -66,9 +60,6 @@ public class CodeGenerationVisitor implements Visitor {
         }
     }
 
-    /**
-     * Visit an assignment statement node.
-     */
     @Override
     public void visit(AssignmentStatement node) {
         Expression expressionToAssign = node.getExpression();
@@ -77,9 +68,6 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(toAppend);
     }
 
-    /**
-     * Visit a if statement node.
-     */
     @Override
     public void visit(IfStatement node) {
         Expression condition = node.getCondition();
@@ -92,9 +80,6 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(toAppend);
     }
 
-    /**
-     * Visit a if else statement node.
-     */
     @Override
     public void visit(IfElseStatement node) {
         Expression condition = node.getCondition();
@@ -112,9 +97,6 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(toAppend);
     }
 
-    /**
-     * Visit a while statement node.
-     */
     @Override
     public void visit(WhileStatement node) {
         Expression condition = node.getCondition();
@@ -127,9 +109,6 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(toAppend);
     }
 
-    /**
-     * Visit a return statement node.
-     */
     @Override
     public void visit(ReturnStatement node) {
         Expression exp = node.getExpression();
@@ -137,9 +116,6 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(String.format("return %s", context.getNodeTemp(exp)));
     }
 
-    /**
-     * Visit a method call expression node.
-     */
     @Override
     public void visit(MethodCall node) {
         for (Expression arg : node.getArguments()) {
@@ -148,18 +124,12 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(context.getNodeTemp(node) + " = call " + node.getMethodName());
     }
 
-    /**
-     * Visit a method call statement node.
-     */
     @Override
-    public void visit(ConstantExpression node) { /* Not needed */ }
+    public void visit(ConstantExpression node) { }
 
     @Override
-    public void visit(VariableExpression node) { /* Not needed */ }
+    public void visit(VariableExpression node) { }
 
-    /**
-     * Visit a method call statement node.
-     */
     @Override
     public void visit(UnaryExpression node) {
         Expression expressionToAssign = node.getExpression();
@@ -168,9 +138,6 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(toAppend);
     }
 
-    /**
-     * Visit a method call statement node.
-     */
     @Override
     public void visit(BinaryExpression node) {
         Expression left = node.getLeft();
@@ -181,18 +148,10 @@ public class CodeGenerationVisitor implements Visitor {
         appendCode(toAppend);
     }
 
-    /**
-     * Append code to the code buffer.
-     *
-     * @param codeToAppend The code to append.
-     */
     private void appendCode(String codeToAppend) {
         code.append(codeToAppend).append("\n");
     }
 
-    /**
-     * Process all labels in the labels generating code for each one.
-     */
     private void processLabels() {
         for (Map.Entry<String, Node> entry : context.getSubtrees().entrySet()) {
             appendCode("\n" + entry.getKey() + ":");

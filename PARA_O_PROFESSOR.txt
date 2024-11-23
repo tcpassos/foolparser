@@ -1,8 +1,0 @@
-Grupo:
-Lucas Pelinson
-Tiago Cardoso dos Passos
-
-O projeto foi construído com Maven, então para re-gerar os binários, rodar na pasta do projeto:
-mvn clean install
-
-Um arquivo exemplo já foi adicionado nos resources.

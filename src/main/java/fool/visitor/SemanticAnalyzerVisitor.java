@@ -66,8 +66,6 @@ public class SemanticAnalyzerVisitor implements Visitor {
         return globalScope.serialize();
     }    
 
-    // Visitor methods
-
     @Override
     public void visit(ClassDeclaration node) {
         node.getFields().forEach(f -> f.accept(this));
@@ -76,7 +74,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(VariableDeclaration node) {
-        // Declare variable
+        // Declara a variável
         VariableSymbolInfo varSymbol = new VariableSymbolInfo(node.getName(), node.getType());
         try {
             currentScope.declare(varSymbol);
@@ -87,7 +85,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(Method node) {
-        // Declare method
+        // Declara o método
         List<ParameterSymbolInfo> params = node.getArguments()
                                                .stream()
                                                .map(p -> new ParameterSymbolInfo(p.getName(), p.getType()))
@@ -99,11 +97,11 @@ public class SemanticAnalyzerVisitor implements Visitor {
             reportError("Method " + node.getName() + ": " + e.getMessage());
         }
 
-        // Create a child scope for the method
+        // Cria um escopo filho para o método
         enterScope(currentScope.createChildScope());
         currentMethodReturnType = node.getReturnType();
 
-        // Declare parameters
+        // Declara os parâmetros
         for (VariableDeclaration param : node.getArguments()) {
             VariableSymbolInfo paramSymbol = new VariableSymbolInfo(param.getName(), param.getType());
             try {
@@ -123,7 +121,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(AssignmentStatement node) {
-        // Check if variable is declared
+        // Verifica se a variável foi declarada
         SymbolInfo varSymbol = currentScope.lookup(node.getIdentifier());
         if (varSymbol == null) {
             reportError("Variable '" + node.getIdentifier() + "' not declared.");
@@ -134,11 +132,11 @@ public class SemanticAnalyzerVisitor implements Visitor {
             return;
         }
 
-        // Visit expression
+        // Visita a expressão
         node.getExpression().accept(this);
         Type exprType = node.getExpression().getType();
 
-        // Check type compatibility
+        // Verifica compatibilidade de tipos
         if (!varSymbol.getType().isCompatible(exprType)) {
             reportError("Type mismatch in assignment to variable '" + node.getIdentifier() + "'. Expected " + varSymbol.getType() + ", found " + exprType + ".");
         }
@@ -146,47 +144,47 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(IfStatement node) {
-        // Visit condition
+        // Visita a condição
         node.getCondition().accept(this);
         Type conditionType = node.getCondition().getType();
 
-        // Condition must be boolean
+        // A condição deve ser booleana
         if (!(conditionType instanceof BoolType)) {
             reportError("Condition in 'if' statement must be of type bool.");
         }
 
-        // Visit then branch
+        // Visita o ramo 'then'
         node.getThen().accept(this);
     }
 
     @Override
     public void visit(IfElseStatement node) {
-        // Visit condition
+        // Visita a condição
         node.getCondition().accept(this);
         Type conditionType = node.getCondition().getType();
 
-        // Condition must be boolean
+        // A condição deve ser booleana
         if (!(conditionType instanceof BoolType)) {
             reportError("Condition in 'if-else' statement must be of type bool.");
         }
 
-        // Visit then and else branch
+        // Visita os ramos 'then' e 'else'
         node.getThen().accept(this);
         node.getOtherwise().accept(this);
     }
 
     @Override
     public void visit(WhileStatement node) {
-        // Visit condition
+        // Visita a condição
         node.getCondition().accept(this);
         Type conditionType = node.getCondition().getType();
 
-        // Condition must be boolean
+        // A condição deve ser booleana
         if (!(conditionType instanceof BoolType)) {
             reportError("Condition in 'while' statement must be of type bool.");
         }
 
-        // Visit body
+        // Visita o corpo
         node.getBody().accept(this);
     }
 
@@ -197,11 +195,11 @@ public class SemanticAnalyzerVisitor implements Visitor {
             return;
         }
 
-        // Visit expression
+        // Visita a expressão
         node.getExpression().accept(this);
         Type exprType = node.getExpression().getType();
 
-        // Check type compatibility
+        // Verifica compatibilidade de tipos
         if (!currentMethodReturnType.isCompatible(exprType)) {
             reportError("Type mismatch in return statement. Expected " + currentMethodReturnType + ", found " + exprType + ".");
         }
@@ -209,7 +207,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(MethodCall node) {
-        // Check if method is declared
+        // Verifica se o método foi declarado
         SymbolInfo methodSymbol = currentScope.lookup(node.getMethodName());
         if (methodSymbol == null) {
             reportError("Method '" + node.getMethodName() + "' not declared.");
@@ -226,11 +224,11 @@ public class SemanticAnalyzerVisitor implements Visitor {
         List<ParameterSymbolInfo> parameters = method.getParameters();
         List<Expression> arguments = node.getArguments();
 
-        // Check number of arguments
+        // Verifica o número de argumentos
         if (parameters.size() != arguments.size()) {
             reportError("Method '" + node.getMethodName() + "' expects " + parameters.size() + " arguments, but got " + arguments.size() + ".");
         } else {
-            // Check types of arguments
+            // Verifica os tipos dos argumentos
             for (int i = 0; i < parameters.size(); i++) {
                 arguments.get(i).accept(this);
                 Type argType = arguments.get(i).getType();
@@ -259,7 +257,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(VariableExpression node) {
-        // Check if variable is declared
+        // Verifica se a variável foi declarada
         SymbolInfo varSymbol = currentScope.lookup(node.getName());
         if (varSymbol == null) {
             reportError("Variable '" + node.getName() + "' not declared.");
@@ -276,7 +274,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(UnaryExpression node) {
-        // Visit expression
+        // Visita a expressão
         node.getExpression().accept(this);
         Type exprType = node.getExpression().getType();
 
@@ -299,7 +297,7 @@ public class SemanticAnalyzerVisitor implements Visitor {
 
     @Override
     public void visit(BinaryExpression node) {
-        // Visit left and right expressions
+        // Visita as expressões esquerda e direita
         node.getLeft().accept(this);
         node.getRight().accept(this);
 

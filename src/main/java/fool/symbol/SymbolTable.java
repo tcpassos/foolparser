@@ -19,7 +19,7 @@ public class SymbolTable implements SymbolTableEntry {
     }
 
     public void declare(SymbolInfo symbol) throws SemanticException {
-        // Verificar duplicatas
+        // Verifica duplicatas
         for (SymbolTableEntry entry : entries) {
             if (entry instanceof SymbolInfo) {
                 SymbolInfo existingSymbol = (SymbolInfo) entry;
@@ -32,7 +32,7 @@ public class SymbolTable implements SymbolTableEntry {
     }
 
     public SymbolInfo lookup(String name) {
-        // Procurar neste escopo
+        // Procura neste escopo
         for (SymbolTableEntry entry : entries) {
             if (entry instanceof SymbolInfo) {
                 SymbolInfo symbol = (SymbolInfo) entry;
@@ -41,7 +41,7 @@ public class SymbolTable implements SymbolTableEntry {
                 }
             }
         }
-        // Procurar nos escopos ancestrais
+        // Procura nos escopos ancestrais
         if (parent != null) {
             return parent.lookup(name);
         }

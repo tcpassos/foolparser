@@ -43,7 +43,7 @@ public class Main {
             ast.accept(codeGenerator);
 
             // Write code to file
-            try (FileWriter writer = new FileWriter("output.txt")) {
+            try (FileWriter writer = new FileWriter("intermediate_code.txt")) {
                 writer.write(codeGenerator.getCode());
             } catch (IOException e) {
                 System.err.println("Error writing code to file: " + e.getMessage());

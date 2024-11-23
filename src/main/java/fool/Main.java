@@ -4,6 +4,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import fool.ast.ClassDeclaration;
+import fool.visitor.CodeGenerationVisitor;
+import fool.visitor.SemanticAnalyzerVisitor;
 import java_cup.runtime.DefaultSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 

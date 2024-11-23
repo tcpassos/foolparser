@@ -4,6 +4,9 @@ import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import fool.ast.*;
+import fool.type.*;
+
 parser code {:
     public void report_error(String message, Object info) {
         Symbol symbol = (Symbol) info;

@@ -8,6 +8,8 @@ package fool;
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
+import fool.ast.*;
+import fool.type.*;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20150326 (SVN rev 63) generated parser.
